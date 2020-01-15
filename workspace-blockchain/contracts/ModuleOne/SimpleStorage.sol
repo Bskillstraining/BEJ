@@ -1,25 +1,13 @@
-pragma solidity ^0.5.0;
-
-import "@openzeppelin/contracts/math/SafeMath.sol";
+pragma solidity ^0.5.10;
 
 
 /**
  * @title Simple Storage
- * @dev A simple way to save a number.
+ * @dev A simple contract to save a number.
  */
 contract SimpleStorage {
-    using SafeMath for uint256;
 
     uint256 private storedData;
-
-    event SetValue(uint256 newValue);
-
-    /**
-     * constructor method setting an initial value
-     */
-    constructor() public {
-        storedData = 5;
-    }
 
     /**
      * @dev Set the number to be saved.
@@ -27,7 +15,6 @@ contract SimpleStorage {
      */
     function set(uint256 x) public {
         storedData = x;
-        emit SetValue(x);
     }
 
     /**
