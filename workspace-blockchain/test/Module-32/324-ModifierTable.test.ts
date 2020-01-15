@@ -1,112 +1,44 @@
 import { should } from 'chai';
 import { ModifierTableInstance } from '../../types/truffle-contracts';
 
+const { expectRevert } = require('@openzeppelin/test-helpers');
 
 const ModifierTable = artifacts.require('./Module-32/ModifierTable.sol') as Truffle.Contract<ModifierTableInstance>;
 should();
 
-/** @test {SimpleStorage} contract */
-contract('SimpleStorage', (accounts) => {
+/** @test {ModifierTable} contract */
+contract('ModifierTable', (accounts) => {
 
-    let simpleStorage: SimpleStorageInstance;
-    const valueToStore = 42;
+    let modifierTable: ModifierTableInstance;
 
+    const owner = accounts[0];
+    const nonOwner = accounts[1];
+
+    const key = 42;
+    const value = 43;
 
     beforeEach(async () => {
-        simpleStorage = await SimpleStorage.new();
+        modifierTable = await ModifierTable.new({ from: owner });
     });
 
     /**
      * Test the two contract methods
-     * @test {SimpleStorage#set} and {SimpleStorage#get}
+     * @test {ModifierTable#set} and {ModifierTable#get}
      */
     it('Store and retrieve a value.', async () => {
-        await simpleStorage.set(valueToStore, { from: accounts[0] });
-        const storedData = await simpleStorage.get();
+        await modifierTable.set(key, value, { from: owner });
+        const storedValue = await modifierTable.get(key, { from: owner });
 
-        (storedData.toNumber()).should.be.equal(valueToStore);
+        (storedValue.toNumber()).should.be.equal(value);
     });
 
     /**
-     * Test retrieving a value before setting it.
-     * @test {SimpleStorage#get}
+     * @test {ModifierTable#set}
      */
-    it('Retrieve a value before setting it.', async () => {
-        const storedData = await simpleStorage.get();
-
-        (storedData.toNumber()).should.be.equal(0);
-    });
-});
-
-/** @test {PublicStorage} contract */
-contract('PublicStorage', (accounts) => {
-
-    let publicStorage: PublicStorageInstance;
-    const valueToStore = 42;
-
-
-    beforeEach(async () => {
-        publicStorage = await PublicStorage.new();
-    });
-
-    /**
-     * Test the contract method
-     * @test {PublicStorage#set} and {PublicStorage#storedData}
-     */
-    it('Store and retrieve a value.', async () => {
-        await publicStorage.set(valueToStore, { from: accounts[0] });
-        const storedData = await publicStorage.storedData();
-
-        (storedData.toNumber()).should.be.equal(valueToStore);
-    });
-
-    /**
-     * Test retrieving a value before setting it.
-     * @test {PublicStorage#storedData}
-     */
-    it('Retrieve a value before setting it.', async () => {
-        const storedData = await publicStorage.storedData();
-
-        (storedData.toNumber()).should.be.equal(0);
-    });
-});
-
-/** @test {SimpleTable} contract */
-contract('SimpleTable', (accounts) => {
-
-    let simpleTable: SimpleTableInstance;
-    const keyX = 1;
-    const keyY = 2;
-    const keyZ = 3;
-    const valueX = 4;
-    const valueY = 5;
-
-
-    beforeEach(async () => {
-        simpleTable = await SimpleTable.new();
-    });
-
-    /**
-     * Test the contract method
-     * @test {SimpleTable#set} and {SimpleTable#get}
-     */
-    it('Store and retrieve a value.', async () => {
-        await simpleTable.set(keyX, valueX, { from: accounts[0] });
-        await simpleTable.set(keyY, valueY, { from: accounts[0] });
-        const storedValueX = await simpleTable.get(keyX);
-        const storedValueY = await simpleTable.get(keyY);
-
-        (storedValueX.toNumber()).should.be.equal(valueX);
-        (storedValueY.toNumber()).should.be.equal(valueY);
-    });
-
-    /**
-     * Test retrieving a value before setting it.
-     * @test {SimpleTable#get}
-     */
-    it('Retrieve a non existing value.', async () => {
-        const storedValueZ = await simpleTable.get(keyZ);
-
-        (storedValueZ.toNumber()).should.be.equal(0);
+    it('Only owner can set', async () => {
+        await expectRevert(
+            modifierTable.set(key, value, { from: nonOwner }),
+            'Restricted to owner.',
+        );
     });
 });

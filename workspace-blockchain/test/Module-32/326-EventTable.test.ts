@@ -1,112 +1,76 @@
 import { should } from 'chai';
 import { EventTableInstance } from '../../types/truffle-contracts';
 
+const { expectRevert, expectEvent } = require('@openzeppelin/test-helpers');
 
 const EventTable = artifacts.require('./Module-32/EventTable.sol') as Truffle.Contract<EventTableInstance>;
 should();
 
-/** @test {SimpleStorage} contract */
-contract('SimpleStorage', (accounts) => {
 
-    let simpleStorage: SimpleStorageInstance;
-    const valueToStore = 42;
+/** @test {EventTable} contract */
+contract('EventTable', (accounts) => {
 
+    let eventTable: EventTableInstance;
+
+    const owner = accounts[0];
+    const nonOwner = accounts[1];
+
+    const keyToStore = 42;
+    const valueToStore = 43;
 
     beforeEach(async () => {
-        simpleStorage = await SimpleStorage.new();
+        eventTable = await EventTable.new({ from: owner });
     });
 
     /**
      * Test the two contract methods
-     * @test {SimpleStorage#set} and {SimpleStorage#get}
+     * @test {EventTable#set} and {EventTable#get}
      */
     it('Store and retrieve a value.', async () => {
-        await simpleStorage.set(valueToStore, { from: accounts[0] });
-        const storedData = await simpleStorage.get();
+        await eventTable.set(keyToStore, valueToStore, { from: owner });
+        const storedValue = await eventTable.get(keyToStore, { from: owner });
 
-        (storedData.toNumber()).should.be.equal(valueToStore);
+        (storedValue.toNumber()).should.be.equal(valueToStore);
     });
 
     /**
-     * Test retrieving a value before setting it.
-     * @test {SimpleStorage#get}
+     * @test {EventTable#set}
      */
-    it('Retrieve a value before setting it.', async () => {
-        const storedData = await simpleStorage.get();
-
-        (storedData.toNumber()).should.be.equal(0);
-    });
-});
-
-/** @test {PublicStorage} contract */
-contract('PublicStorage', (accounts) => {
-
-    let publicStorage: PublicStorageInstance;
-    const valueToStore = 42;
-
-
-    beforeEach(async () => {
-        publicStorage = await PublicStorage.new();
+    it('Only owner can set', async () => {
+        await expectRevert(
+            eventTable.set(keyToStore, valueToStore, { from: nonOwner }),
+            'Ownable: caller is not the owner',
+        );
     });
 
     /**
-     * Test the contract method
-     * @test {PublicStorage#set} and {PublicStorage#storedData}
+     * Test event emission
+     * @test {EventTable#set}
      */
-    it('Store and retrieve a value.', async () => {
-        await publicStorage.set(valueToStore, { from: accounts[0] });
-        const storedData = await publicStorage.storedData();
+    it('Store and retrieve a value - event emission.', async () => {
+        const transaction = await eventTable.set(keyToStore, valueToStore, { from: owner });
+        const firstEvent = transaction.logs[0];
+        const eventName = firstEvent.event;
+        const eventKey = firstEvent.args.key;
+        const eventValue = firstEvent.args.value;
 
-        (storedData.toNumber()).should.be.equal(valueToStore);
+        eventName.should.be.equal('ValueAdded');
+        eventKey.toNumber().should.be.equal(keyToStore);
+        eventValue.toNumber().should.be.equal(valueToStore);
     });
 
     /**
-     * Test retrieving a value before setting it.
-     * @test {PublicStorage#storedData}
+     * Test event emission with expectEvent
+     * @test {EventTable#set}
      */
-    it('Retrieve a value before setting it.', async () => {
-        const storedData = await publicStorage.storedData();
-
-        (storedData.toNumber()).should.be.equal(0);
-    });
-});
-
-/** @test {SimpleTable} contract */
-contract('SimpleTable', (accounts) => {
-
-    let simpleTable: SimpleTableInstance;
-    const keyX = 1;
-    const keyY = 2;
-    const keyZ = 3;
-    const valueX = 4;
-    const valueY = 5;
-
-
-    beforeEach(async () => {
-        simpleTable = await SimpleTable.new();
-    });
-
-    /**
-     * Test the contract method
-     * @test {SimpleTable#set} and {SimpleTable#get}
-     */
-    it('Store and retrieve a value.', async () => {
-        await simpleTable.set(keyX, valueX, { from: accounts[0] });
-        await simpleTable.set(keyY, valueY, { from: accounts[0] });
-        const storedValueX = await simpleTable.get(keyX);
-        const storedValueY = await simpleTable.get(keyY);
-
-        (storedValueX.toNumber()).should.be.equal(valueX);
-        (storedValueY.toNumber()).should.be.equal(valueY);
-    });
-
-    /**
-     * Test retrieving a value before setting it.
-     * @test {SimpleTable#get}
-     */
-    it('Retrieve a non existing value.', async () => {
-        const storedValueZ = await simpleTable.get(keyZ);
-
-        (storedValueZ.toNumber()).should.be.equal(0);
+    it('Store and retrieve a value - expectEvent.', async () => {
+        expectEvent(
+            await eventTable.set(keyToStore, valueToStore, { from: owner }),
+            'ValueAdded',
+            {
+                key: keyToStore.toString(),
+                value: valueToStore.toString(),
+            },
+        );
     });
 });
