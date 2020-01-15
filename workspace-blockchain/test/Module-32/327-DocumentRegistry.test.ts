@@ -1,112 +1,69 @@
 import { should } from 'chai';
 import { DocumentRegistryInstance } from '../../types/truffle-contracts';
 
+const { expectRevert, expectEvent } = require('@openzeppelin/test-helpers');
 
 const DocumentRegistry = artifacts.require('./Module-32/DocumentRegistry.sol') as Truffle.Contract<DocumentRegistryInstance>;
 should();
 
-/** @test {SimpleStorage} contract */
-contract('SimpleStorage', (accounts) => {
 
-    let simpleStorage: SimpleStorageInstance;
-    const valueToStore = 42;
+/** @test {DocumentRegistry} contract */
+contract('DocumentRegistry', (accounts) => {
 
+    let documentRegistry: DocumentRegistryInstance;
+
+    const owner = accounts[0];
+    const nonOwner = accounts[1];
+
+    const hashToStore = 43;
 
     beforeEach(async () => {
-        simpleStorage = await SimpleStorage.new();
+        documentRegistry = await DocumentRegistry.new({ from: owner });
     });
 
     /**
      * Test the two contract methods
-     * @test {SimpleStorage#set} and {SimpleStorage#get}
+     * @test {DocumentRegistry#set} and {DocumentRegistry#get}
      */
-    it('Store and retrieve a value.', async () => {
-        await simpleStorage.set(valueToStore, { from: accounts[0] });
-        const storedData = await simpleStorage.get();
+    it('Store a hash and retrieve a block number.', async () => {
+        await documentRegistry.set(hashToStore, { from: owner });
+        const timestamp = await documentRegistry.get(hashToStore, { from: owner });
 
-        (storedData.toNumber()).should.be.equal(valueToStore);
+        (timestamp.toNumber()).should.not.be.equal(0);
     });
 
     /**
-     * Test retrieving a value before setting it.
-     * @test {SimpleStorage#get}
+     * Test block number of the transaction is associated to the hash
+     * @test {DocumentRegistry#set} and {DocumentRegistry#get}
      */
-    it('Retrieve a value before setting it.', async () => {
-        const storedData = await simpleStorage.get();
+    it('Retrieve the block number in which a hash was stored.', async () => {
+        const transaction = await documentRegistry.set(hashToStore, { from: owner });
+        const timestamp = await documentRegistry.get(hashToStore, { from: owner });
 
-        (storedData.toNumber()).should.be.equal(0);
-    });
-});
-
-/** @test {PublicStorage} contract */
-contract('PublicStorage', (accounts) => {
-
-    let publicStorage: PublicStorageInstance;
-    const valueToStore = 42;
-
-
-    beforeEach(async () => {
-        publicStorage = await PublicStorage.new();
+        (timestamp.toNumber()).should.be.equal(transaction.receipt.blockNumber);
     });
 
     /**
-     * Test the contract method
-     * @test {PublicStorage#set} and {PublicStorage#storedData}
+     * @test {DocumentRegistry#set}
      */
-    it('Store and retrieve a value.', async () => {
-        await publicStorage.set(valueToStore, { from: accounts[0] });
-        const storedData = await publicStorage.storedData();
-
-        (storedData.toNumber()).should.be.equal(valueToStore);
+    it('Only owner can set', async () => {
+        await expectRevert(
+            documentRegistry.set(hashToStore, { from: nonOwner }),
+            'Ownable: caller is not the owner',
+        );
     });
 
     /**
-     * Test retrieving a value before setting it.
-     * @test {PublicStorage#storedData}
+     * Test event emission with expectEvent
+     * @test {DocumentRegistry#set}
      */
-    it('Retrieve a value before setting it.', async () => {
-        const storedData = await publicStorage.storedData();
-
-        (storedData.toNumber()).should.be.equal(0);
-    });
-});
-
-/** @test {SimpleTable} contract */
-contract('SimpleTable', (accounts) => {
-
-    let simpleTable: SimpleTableInstance;
-    const keyX = 1;
-    const keyY = 2;
-    const keyZ = 3;
-    const valueX = 4;
-    const valueY = 5;
-
-
-    beforeEach(async () => {
-        simpleTable = await SimpleTable.new();
-    });
-
-    /**
-     * Test the contract method
-     * @test {SimpleTable#set} and {SimpleTable#get}
-     */
-    it('Store and retrieve a value.', async () => {
-        await simpleTable.set(keyX, valueX, { from: accounts[0] });
-        await simpleTable.set(keyY, valueY, { from: accounts[0] });
-        const storedValueX = await simpleTable.get(keyX);
-        const storedValueY = await simpleTable.get(keyY);
-
-        (storedValueX.toNumber()).should.be.equal(valueX);
-        (storedValueY.toNumber()).should.be.equal(valueY);
-    });
-
-    /**
-     * Test retrieving a value before setting it.
-     * @test {SimpleTable#get}
-     */
-    it('Retrieve a non existing value.', async () => {
-        const storedValueZ = await simpleTable.get(keyZ);
-
-        (storedValueZ.toNumber()).should.be.equal(0);
+    it('Store and retrieve a value - expectEvent.', async () => {
+        expectEvent(
+            await documentRegistry.set(hashToStore, { from: owner }),
+            'EntryAdded',
+            {
+                hash: hashToStore.toString(),
+            },
+        );
     });
 });

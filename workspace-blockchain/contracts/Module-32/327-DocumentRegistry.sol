@@ -22,7 +22,7 @@ contract DocumentRegistry is Ownable {
         public
         onlyOwner
     {
-        registry[hash] = now;
+        registry[hash] = block.number;
         emit EntryAdded(hash);
     }
 
