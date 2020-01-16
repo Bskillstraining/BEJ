@@ -17,7 +17,7 @@ contract('Mintable', (accounts) => {
     const initialSupply = 1000000;
 
     beforeEach(async () => {
-        mintable = await Mintable.new();
+        mintable = await Mintable.new({ from: owner });
     });
 
     /**
@@ -55,16 +55,10 @@ contract('Mintable', (accounts) => {
      * Test burning.
      * @test {Mintable#burn}
      */
-    it('Burning not allowed to general public.', async () => {
-        await expectRevert(
-            mintable.burn(initialSupply, { from: user1 }),
-            'Ownable: caller is not the owner',
-        );
-    });
 
     it('Burning above balance not allowed.', async () => {
         await expectRevert(
-            mintable.burn(initialSupply, { from: owner }),
+            mintable.burn(initialSupply, { from: user1 }),
             'Insufficient balance.',
         );
     });
