@@ -41,7 +41,7 @@ contract('Cryptocurrency', (accounts) => {
     });
 
     /**
-     * Test retrieving a value before setting it.
+     * Test transferring balances.
      * @test {Cryptocurrency#transfer}
      */
     it('Transfer above balance.', async () => {
