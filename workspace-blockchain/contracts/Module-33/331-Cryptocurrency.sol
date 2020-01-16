@@ -10,7 +10,7 @@ import "@openzeppelin/contracts/ownership/Ownable.sol";
 contract Cryptocurrency {
     event Transferred(address recipient, uint256 amount);
 
-    mapping (address => uint256) private balances;
+    mapping (address => uint256) internal balances;
 
     constructor (uint256 totalSupply)
         public
@@ -21,7 +21,7 @@ contract Cryptocurrency {
     function transfer(address recipient, uint256 amount)
         public
     {
-        require(balances[msg.sender] >= amount, "Insuficcient balance.");
+        require(balances[msg.sender] >= amount, "Insufficient balance.");
         balances[msg.sender] -= amount;
         balances[recipient] += amount;
         emit Transferred(recipient, amount);

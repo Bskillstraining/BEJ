@@ -2,7 +2,7 @@ pragma solidity ^0.5.10;
 
 import "@openzeppelin/contracts/ownership/Ownable.sol";
 import "@openzeppelin/contracts/math/SafeMath.sol";
-import "./Cryptocurrency.sol";
+import "./331-Cryptocurrency.sol";
 
 /**
  * @title Mintable
@@ -24,14 +24,14 @@ contract Mintable is Cryptocurrency, Ownable {
         public
         onlyOwner
     {
-        balances[owner] = balances[owner].add(amount);
+        balances[owner()] = balances[owner()].add(amount);
         emit Minted(amount);
     }
 
     function burn(uint256 amount)
         public
     {
-        balances[owner] = balances[owner].sub(amount);
+        balances[owner()] = balances[owner()].sub(amount);
         emit Burned(amount);
     }
 }

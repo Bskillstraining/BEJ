@@ -1,8 +1,8 @@
 pragma solidity ^0.5.10;
 
 import "@openzeppelin/contracts/ownership/Ownable.sol";
-import "@openzeppelin/contracts/token/ERC20.sol";
-import "@openzeppelin/contracts/token/ERC20Detailed.sol";
+import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/ERC20Detailed.sol";
 import "@openzeppelin/contracts/math/SafeMath.sol";
 
 
@@ -27,27 +27,30 @@ contract LetsGetRich is ERC20, ERC20Detailed, Ownable {
         public
         onlyOwner
     {
-        _mint(owner, amount);
+        _mint(owner(), amount);
     }
 
     function burn(uint256 amount)
         public
         onlyOwner
     {
-        _burn(owner, amount);
+        _burn(owner(), amount);
     }
 
     function transfer(address recipient, uint256 amount)
         public
+        returns(bool)
     {
-        feeToCharge = amount.mul(fee).div(10000);
-        super.transfer(owner, feeToCharge);
+        uint256 feeToCharge = amount.mul(_fee).div(10000);
+        super.transfer(owner(), feeToCharge);
         super.transfer(recipient, amount.sub(feeToCharge));
+        return true;
     }
 
     function transferFrom(address sender, address recipient, uint256 amount)
         public
+        returns(bool)
     {
-        revert;
+        revert("transferFrom disabled.");
     }
 }
