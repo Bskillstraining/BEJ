@@ -51,6 +51,19 @@ contract('SafeMintable', (accounts) => {
         );
     });
 
+    it('Minting initial supply.', async () => {
+        const transaction = await safeMintable.mint(initialSupply, { from: owner });
+
+        const firstEvent = transaction.logs[0];
+        const eventName = firstEvent.event;
+        const eventAmount = firstEvent.args.amount;
+
+        eventName.should.be.equal('Minted');
+        eventAmount.toNumber().should.be.equal(initialSupply);
+
+        (await safeMintable.balanceOf(owner)).toNumber().should.be.equal(initialSupply);
+    });
+
     /**
      * Test burning.
      * @test {SafeMintable#burn}
