@@ -44,4 +44,10 @@ contract LetsGetRich is ERC20, ERC20Detailed, Ownable {
         super.transfer(owner, feeToCharge);
         super.transfer(recipient, amount.sub(feeToCharge));
     }
+
+    function transferFrom(address sender, address recipient, uint256 amount)
+        public
+    {
+        revert;
+    }
 }
