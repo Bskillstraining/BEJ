@@ -1,12 +1,12 @@
 import { should } from 'chai';
 import { PublicStorageInstance } from '../../types/truffle-contracts';
 
-const PublicStorage = artifacts.require('./Module-31/PublicStorage.sol') as Truffle.Contract<PublicStorageInstance>;
+const PublicStorage = artifacts.require('PublicStorage') as Truffle.Contract<PublicStorageInstance>;
 should();
 
 
 /** @test {PublicStorage} contract */
-contract('PublicStorage', (accounts) => {
+contract('PublicStorage', () => {
 
     let publicStorage: PublicStorageInstance;
     const valueToStore = 42;
@@ -21,7 +21,7 @@ contract('PublicStorage', (accounts) => {
      * @test {PublicStorage#set} and {PublicStorage#storedData}
      */
     it('Store and retrieve a value.', async () => {
-        await publicStorage.set(valueToStore, { from: accounts[0] });
+        await publicStorage.set(valueToStore);
         const storedData = await publicStorage.storedData();
 
         (storedData.toNumber()).should.be.equal(valueToStore);
