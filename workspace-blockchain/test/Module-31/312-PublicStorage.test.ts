@@ -1,9 +1,9 @@
 import { should } from 'chai';
 import { PublicStorageInstance } from '../../types/truffle-contracts';
 
-const PublicStorage = artifacts.require('PublicStorage') as Truffle.Contract<PublicStorageInstance>;
 should();
 
+const PublicStorage = artifacts.require('PublicStorage') as Truffle.Contract<PublicStorageInstance>;
 
 /** @test {PublicStorage} contract */
 contract('PublicStorage', () => {
