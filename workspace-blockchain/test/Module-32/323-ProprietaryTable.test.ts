@@ -1,10 +1,10 @@
 import { should } from 'chai';
 import { ProprietaryTableInstance } from '../../types/truffle-contracts';
 
-const { expectRevert } = require('@openzeppelin/test-helpers');
-
-const ProprietaryTable = artifacts.require('./Module-32/ProprietaryTable.sol') as Truffle.Contract<ProprietaryTableInstance>;
 should();
+
+const ProprietaryTable = artifacts.require('ProprietaryTable') as Truffle.Contract<ProprietaryTableInstance>;
+const { expectRevert } = require('@openzeppelin/test-helpers');
 
 /** @test {ProprietaryTable} contract */
 contract('ProprietaryTable', (accounts) => {
@@ -14,7 +14,7 @@ contract('ProprietaryTable', (accounts) => {
     const owner = accounts[0];
     const nonOwner = accounts[1];
 
-    const key = 42;
+    const key = accounts[2];
     const value = 43;
 
     beforeEach(async () => {
