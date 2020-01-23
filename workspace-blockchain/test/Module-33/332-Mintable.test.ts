@@ -4,8 +4,8 @@ import { MintableInstance } from '../../types/truffle-contracts';
 const { expectRevert } = require('@openzeppelin/test-helpers');
 
 const Mintable = artifacts.require('./Module-33/Mintable.sol') as Truffle.Contract<MintableInstance>;
-should();
 
+should();
 
 /** @test {Mintable} contract */
 contract('Mintable', (accounts) => {

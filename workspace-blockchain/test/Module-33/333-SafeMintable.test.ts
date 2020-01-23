@@ -6,6 +6,7 @@ const { BN, expectRevert } = require('@openzeppelin/test-helpers');
 
 const Mintable = artifacts.require('Mintable') as Truffle.Contract<MintableInstance>;
 const SafeMintable = artifacts.require('SafeMintable') as Truffle.Contract<SafeMintableInstance>;
+
 should();
 
 /** @test {Mintable} contract */

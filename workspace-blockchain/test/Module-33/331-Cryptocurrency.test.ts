@@ -1,11 +1,9 @@
 import { should } from 'chai';
 import { CryptocurrencyInstance } from '../../types/truffle-contracts';
 
-const { expectRevert } = require('@openzeppelin/test-helpers');
-
 const Cryptocurrency = artifacts.require('./Module-33/Cryptocurrency.sol') as Truffle.Contract<CryptocurrencyInstance>;
-should();
 
+should();
 
 /** @test {Cryptocurrency} contract */
 contract('Cryptocurrency', (accounts) => {
