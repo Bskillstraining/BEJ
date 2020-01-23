@@ -23,7 +23,7 @@ contract LetsGetRich is ERC20, ERC20Detailed, Ownable {
         _fee = fee;
     }
 
-    function mint(address recipient, uint256 amount)
+    function mint(address, uint256 amount)
         public
         onlyOwner
     {
@@ -47,7 +47,7 @@ contract LetsGetRich is ERC20, ERC20Detailed, Ownable {
         return true;
     }
 
-    function transferFrom(address sender, address recipient, uint256 amount)
+    function transferFrom(address, address, uint256)
         public
         returns(bool)
     {
