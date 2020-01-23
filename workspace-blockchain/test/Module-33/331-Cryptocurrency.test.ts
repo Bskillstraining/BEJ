@@ -44,15 +44,8 @@ contract('Cryptocurrency', (accounts) => {
      * Test transferring balances.
      * @test {Cryptocurrency#transfer}
      */
-    it('Transfer above balance.', async () => {
-        await expectRevert(
-            cryptocurrency.transfer(owner, 1, { from: user1 }),
-            'Insufficient balance.',
-        );
-    });
-
-    it('Transfer below balance.', async () => {
-        const transferredAmount = 1;
+    it('Transfer.', async () => {
+        const transferredAmount = 10000;
         const transaction = await cryptocurrency.transfer(user1, transferredAmount, { from: owner });
         const firstEvent = transaction.logs[0];
         const eventName = firstEvent.event;
@@ -65,12 +58,5 @@ contract('Cryptocurrency', (accounts) => {
 
         (await cryptocurrency.balanceOf(owner)).toNumber().should.be.equal(initialSupply - transferredAmount);
         (await cryptocurrency.balanceOf(user1)).toNumber().should.be.equal(transferredAmount);
-    });
-
-    it('Transfer at balance.', async () => {
-        const transaction = await cryptocurrency.transfer(user1, initialSupply, { from: owner });
-
-        (await cryptocurrency.balanceOf(owner)).toNumber().should.be.equal(0);
-        (await cryptocurrency.balanceOf(user1)).toNumber().should.be.equal(initialSupply);
     });
 });

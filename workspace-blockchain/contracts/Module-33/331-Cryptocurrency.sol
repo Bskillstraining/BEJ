@@ -21,7 +21,6 @@ contract Cryptocurrency {
     function transfer(address recipient, uint256 amount)
         public
     {
-        require(balances[msg.sender] >= amount, "Insufficient balance.");
         balances[msg.sender] -= amount;
         balances[recipient] += amount;
         emit Transferred(recipient, amount);

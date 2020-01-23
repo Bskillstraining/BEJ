@@ -56,7 +56,7 @@ contract('Mintable', (accounts) => {
      * @test {Mintable#burn}
      */
 
-    it('Burning above balance not allowed.', async () => {
+    /* it('Burning above balance not allowed.', async () => {
         await expectRevert(
             mintable.burn(initialSupply, { from: user1 }),
             'Insufficient balance.',
@@ -75,10 +75,10 @@ contract('Mintable', (accounts) => {
         eventAmount.toNumber().should.be.equal(initialSupply);
 
         (await mintable.balanceOf(owner)).toNumber().should.be.equal(0);
-    });
+    }); */
 
-    it('Burning partial balance.', async () => {
-        const amountBurned = 1;
+    it('Burning tokens.', async () => {
+        const amountBurned = 10000;
         await mintable.mint(initialSupply, { from: owner });
 
         await mintable.burn(amountBurned, { from: owner });
@@ -90,8 +90,8 @@ contract('Mintable', (accounts) => {
      * Test transferring balances.
      * @test {Mintable#transfer}
      */
-    it('Transfer below balance.', async () => {
-        const transferredAmount = 1;
+    it('Transferring tokens.', async () => {
+        const transferredAmount = 10000;
 
         await mintable.mint(initialSupply, { from: owner });
         const transaction = await mintable.transfer(user1, transferredAmount, { from: owner });
@@ -108,11 +108,11 @@ contract('Mintable', (accounts) => {
         (await mintable.balanceOf(user1)).toNumber().should.be.equal(transferredAmount);
     });
 
-    it('Transfer at balance.', async () => {
+    /* it('Transfer at balance.', async () => {
         await mintable.mint(initialSupply, { from: owner });
         await mintable.transfer(user1, initialSupply, { from: owner });
 
         (await mintable.balanceOf(owner)).toNumber().should.be.equal(0);
         (await mintable.balanceOf(user1)).toNumber().should.be.equal(initialSupply);
-    });
+    }); */
 });
