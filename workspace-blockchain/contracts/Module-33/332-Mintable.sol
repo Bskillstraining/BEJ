@@ -28,7 +28,7 @@ contract Mintable is Cryptocurrency, Ownable {
     function burn(uint256 amount)
         public
     {
-        require(amount >= balances[msg.sender], "Insufficient balance.");
+        require(amount <= balances[msg.sender], "Insufficient balance.");
         balances[msg.sender] -= amount;
         emit Burned(amount);
     }

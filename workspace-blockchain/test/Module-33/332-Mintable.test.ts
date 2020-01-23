@@ -90,15 +90,10 @@ contract('Mintable', (accounts) => {
      * Test transferring balances.
      * @test {Mintable#transfer}
      */
-    it('Transfer above balance.', async () => {
-        await expectRevert(
-            mintable.transfer(owner, 1, { from: user1 }),
-            'Insufficient balance.',
-        );
-    });
-
     it('Transfer below balance.', async () => {
         const transferredAmount = 1;
+
+        await mintable.mint(initialSupply, { from: owner });
         const transaction = await mintable.transfer(user1, transferredAmount, { from: owner });
         const firstEvent = transaction.logs[0];
         const eventName = firstEvent.event;
@@ -114,7 +109,8 @@ contract('Mintable', (accounts) => {
     });
 
     it('Transfer at balance.', async () => {
-        const transaction = await mintable.transfer(user1, initialSupply, { from: owner });
+        await mintable.mint(initialSupply, { from: owner });
+        await mintable.transfer(user1, initialSupply, { from: owner });
 
         (await mintable.balanceOf(owner)).toNumber().should.be.equal(0);
         (await mintable.balanceOf(user1)).toNumber().should.be.equal(initialSupply);
