@@ -1,9 +1,9 @@
 import { should } from 'chai';
 import { UserTableInstance } from '../../types/truffle-contracts';
 
+should();
 
 const UserTable = artifacts.require('./Module-32/UserTable.sol') as Truffle.Contract<UserTableInstance>;
-should();
 
 /** @test {UserTable} contract */
 contract('UserTable', (accounts) => {

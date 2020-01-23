@@ -1,13 +1,12 @@
 import { should } from 'chai';
 import { SimpleTableInstance } from '../../types/truffle-contracts';
 
-
-const SimpleTable = artifacts.require('./Module-32/SimpleTable.sol') as Truffle.Contract<SimpleTableInstance>;
 should();
 
+const SimpleTable = artifacts.require('SimpleTable') as Truffle.Contract<SimpleTableInstance>;
 
 /** @test {SimpleTable} contract */
-contract('SimpleTable', (accounts) => {
+contract('SimpleTable', () => {
 
     let simpleTable: SimpleTableInstance;
     const keyX = 1;
@@ -26,8 +25,8 @@ contract('SimpleTable', (accounts) => {
      * @test {SimpleTable#set} and {SimpleTable#get}
      */
     it('Store and retrieve a value.', async () => {
-        await simpleTable.set(keyX, valueX, { from: accounts[0] });
-        await simpleTable.set(keyY, valueY, { from: accounts[0] });
+        await simpleTable.set(keyX, valueX);
+        await simpleTable.set(keyY, valueY);
         const storedValueX = await simpleTable.get(keyX);
         const storedValueY = await simpleTable.get(keyY);
 
