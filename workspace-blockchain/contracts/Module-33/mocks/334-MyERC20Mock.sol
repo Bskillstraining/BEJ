@@ -1,23 +1,16 @@
 pragma solidity ^0.5.10;
 
-import "@openzeppelin/contracts/ownership/Ownable.sol";
-import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "./../MyERC20.sol";
 
 
 /**
- * @title MyERC20
+ * @title MyERC20Mock
  * @dev These contracts guide the user into building an ERC20 cryptocurrency.
  */
-contract MyERC20 is ERC20, Ownable {
-
-    constructor () // Verify this is needed
-        Ownable()
-        public
-    {}
+contract MyERC20Mock is MyERC20 {
 
     function mint(address recipient, uint256 amount)
         public
-        onlyOwner
     {
         _mint(recipient, amount);
     }
