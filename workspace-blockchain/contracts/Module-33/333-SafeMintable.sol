@@ -3,6 +3,7 @@ pragma solidity ^0.5.10;
 import "@openzeppelin/contracts/ownership/Ownable.sol";
 import "@openzeppelin/contracts/math/SafeMath.sol";
 
+
 /**
  * @title SafeMintable
  * @dev These contracts guide the user into building an ERC20 cryptocurrency.
