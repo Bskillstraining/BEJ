@@ -1,6 +1,6 @@
 pragma solidity ^0.5.10;
 
-import "./../MyERC20.sol";
+import "./../334-MyERC20.sol";
 
 
 /**
