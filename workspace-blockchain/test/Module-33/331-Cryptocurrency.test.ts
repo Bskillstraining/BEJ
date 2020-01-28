@@ -1,7 +1,9 @@
 import { should } from 'chai';
 import { CryptocurrencyInstance } from '../../types/truffle-contracts';
 
-const Cryptocurrency = artifacts.require('./Module-33/Cryptocurrency.sol') as Truffle.Contract<CryptocurrencyInstance>;
+const { expectEvent } = require('@openzeppelin/test-helpers');
+
+const Cryptocurrency = artifacts.require('Cryptocurrency') as Truffle.Contract<CryptocurrencyInstance>;
 
 should();
 
@@ -42,19 +44,26 @@ contract('Cryptocurrency', (accounts) => {
      * Test transferring balances.
      * @test {Cryptocurrency#transfer}
      */
-    it('Transfer.', async () => {
+    it('Transfer changes balances.', async () => {
         const transferredAmount = 10000;
-        const transaction = await cryptocurrency.transfer(user1, transferredAmount, { from: owner });
-        const firstEvent = transaction.logs[0];
-        const eventName = firstEvent.event;
-        const eventRecipient = firstEvent.args.recipient;
-        const eventAmount = firstEvent.args.amount;
-
-        eventName.should.be.equal('Transferred');
-        eventRecipient.should.be.equal(user1);
-        eventAmount.toNumber().should.be.equal(transferredAmount);
-
+        await cryptocurrency.transfer(user1, transferredAmount, { from: owner });
         (await cryptocurrency.balanceOf(owner)).toNumber().should.be.equal(initialSupply - transferredAmount);
         (await cryptocurrency.balanceOf(user1)).toNumber().should.be.equal(transferredAmount);
+    });
+
+    /**
+     * Test transferring balances.
+     * @test {Cryptocurrency#transfer}
+     */
+    it('Transfer sends an event.', async () => {
+        const transferredAmount = 10000;
+        expectEvent(
+            await cryptocurrency.transfer(user1, transferredAmount, { from: owner }),
+            'Transferred',
+            {
+                amount: transferredAmount.toString(),
+                recipient: user1.toString(),
+            },
+        );
     });
 });
