@@ -1,16 +1,16 @@
 import { should } from 'chai';
-import { MyERC20Instance } from '../../types/truffle-contracts';
+import { MyERC20MintableInstance } from '../../types/truffle-contracts';
 
 const { expectRevert } = require('@openzeppelin/test-helpers');
 
-const MyERC20 = artifacts.require('MyERC20') as Truffle.Contract<MyERC20Instance>;
+const MyERC20 = artifacts.require('MyERC20Mintable') as Truffle.Contract<MyERC20MintableInstance>;
 
 should();
 
 /** @test {MyERC20} contract */
 contract('MyERC20', (accounts) => {
 
-    let myERC20: MyERC20Instance;
+    let myERC20: MyERC20MintableInstance;
 
     const owner = accounts[0];
     const user1 = accounts[1];
