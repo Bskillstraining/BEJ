@@ -16,9 +16,12 @@ contract('MyERC20Detailed', (accounts) => {
     const user1 = accounts[1];
     const zeroAddress = '0x0000000000000000000000000000000000000000';
     const initialSupply = 1000000;
+    const name = 'BeyondSkills Token';
+    const symbol = 'BST';
+    const decimals = 18;
 
     beforeEach(async () => {
-        myERC20 = await MyERC20Detailed.new({ from: owner });
+        myERC20 = await MyERC20Detailed.new(name, symbol, decimals, { from: owner });
     });
 
     /**
@@ -30,6 +33,16 @@ contract('MyERC20Detailed', (accounts) => {
 
         (ownerBalance.toNumber()).should.be.equal(initialSupply);
     }); */
+
+    /**
+     * Test the token details
+     * @test {MyERC20Detailed#name}, {MyERC20Detailed#symbol} and {MyERC20Detailed#decimals}
+     */
+    it('Retrieve token details.', async () => {
+        (await myERC20.name()).should.be.equal(name);
+        (await myERC20.symbol()).should.be.equal(symbol);
+        (await myERC20.decimals()).toNumber().should.be.equal(decimals);
+    });
 
     /**
      * Test the balance method
