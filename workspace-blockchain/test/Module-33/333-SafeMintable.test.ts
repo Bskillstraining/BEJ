@@ -2,6 +2,8 @@ import { should } from 'chai';
 import { MintableInstance } from '../../types/truffle-contracts';
 import { SafeMintableInstance } from '../../types/truffle-contracts';
 
+// const { expectEvent, expectRevert } = require('@openzeppelin/test-helpers');
+
 const { expectEvent, expectRevert } = require('@openzeppelin/test-helpers');
 
 const Mintable = artifacts.require('Mintable') as Truffle.Contract<MintableInstance>;
@@ -27,7 +29,8 @@ contract('Mintable', (accounts) => {
         await mintable.burn(oneToken, { from: user1 });
         // user1 has a balance of zero. If he burns tokens he shouldn't have a positive balance afterwards.
         // The test here is that Mintable CAN be exploted.
-        (await mintable.balanceOf(user1)).should.be.greaterThan(0);
+        // The balance after this exploit is 2**256-1 and chai doesn't work with BigNumbers, so we use `assert`
+        assert.isTrue((await mintable.balanceOf(user1)).gt('0'));
     });
 });
 
