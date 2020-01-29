@@ -21,6 +21,10 @@ contract('Mintable', (accounts) => {
         mintable = await Mintable.new(initialSupply, { from: owner });
     });
 
+    it('mints initial supply.', async () => {
+        (await mintable.balanceOf(owner)).toNumber().should.be.equal(initialSupply);
+    });
+
     /**
      * Test minting.
      * @test {Mintable#mint}
