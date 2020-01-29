@@ -12,8 +12,8 @@ contract Mintable is Cryptocurrency, Ownable {
     event Minted(uint256 amount);
     event Burned(uint256 amount);
 
-    constructor ()
-        Cryptocurrency(0)
+    constructor (uint256 initialSupply)
+        Cryptocurrency(initialSupply)
         Ownable()
         public
     {}
@@ -30,6 +30,6 @@ contract Mintable is Cryptocurrency, Ownable {
         public
     {
         balances[msg.sender] -= amount;
-        emit Burned(amount);
+        emit Burned({ amount: amount});
     }
 }
