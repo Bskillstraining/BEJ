@@ -13,7 +13,7 @@ contract SafeMintable is Ownable {
 
     event Transferred(address recipient, uint256 amount);
     event Minted(uint256 amount);
-    event Burned(uint256 amount);
+    event Burnt(uint256 amount);
 
     mapping (address => uint256) internal balances;
 
@@ -42,7 +42,7 @@ contract SafeMintable is Ownable {
         public
     {
         balances[owner()] = balances[owner()].sub(amount);
-        emit Burned(amount);
+        emit Burnt(amount);
     }
 
     function balanceOf(address account)

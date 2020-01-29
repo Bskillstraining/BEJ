@@ -2,7 +2,7 @@ import { should } from 'chai';
 import { MintableInstance } from '../../types/truffle-contracts';
 import { SafeMintableInstance } from '../../types/truffle-contracts';
 
-const { BN, expectRevert } = require('@openzeppelin/test-helpers');
+const { expectEvent, expectRevert } = require('@openzeppelin/test-helpers');
 
 const Mintable = artifacts.require('Mintable') as Truffle.Contract<MintableInstance>;
 const SafeMintable = artifacts.require('SafeMintable') as Truffle.Contract<SafeMintableInstance>;
@@ -16,26 +16,18 @@ contract('Mintable', (accounts) => {
 
     const owner = accounts[0];
     const user1 = accounts[1];
-    const user2 = accounts[2];
-    const initialSupply = 1000000;
+    const initialSupply = 0;
 
     beforeEach(async () => {
-        mintable = await Mintable.new({ from: owner });
-        await mintable.mint(initialSupply, { from: owner });
+        mintable = await Mintable.new(initialSupply, { from: owner });
     });
 
-    /**
-     * Test the balance method
-     * @test {SafeMintable#balanceOf}
-     */
-    it('Exploit for free tokens.', async () => {
-        const zeroTokens = 0;
+    it('can be exploited for free tokens.', async () => {
         const oneToken = 1;
-        const twoTokens = 2;
-        await mintable.transfer(user1, oneToken, { from: owner });
-        await mintable.transfer(user2, twoTokens, { from: user1 });
-        console.log('Balance user1: ' + (await mintable.balanceOf(user1)).toString());
-        console.log('Balance user2: ' + (await mintable.balanceOf(user2)).toString());
+        await mintable.burn(oneToken, { from: user1 });
+        // user1 has a balance of zero. If he burns tokens he shouldn't have a positive balance afterwards.
+        // The test here is that Mintable CAN be exploted.
+        (await mintable.balanceOf(user1)).should.be.greaterThan(0);
     });
 });
 
@@ -46,114 +38,113 @@ contract('SafeMintable', (accounts) => {
 
     const owner = accounts[0];
     const user1 = accounts[1];
-    const initialSupply = 1000000;
+    const oneToken = 1;
+    const currencyToMint = 1000000;
 
     beforeEach(async () => {
         safeMintable = await SafeMintable.new({ from: owner });
     });
 
-    /**
-     * Test the balance method
-     * @test {SafeMintable#balanceOf}
-     */
-    it('Retrieve empty balance.', async () => {
-        const emptyBalance = await safeMintable.balanceOf(user1, { from: owner });
-
-        (emptyBalance.toNumber()).should.be.equal(0);
+    it('mints initial supply.', async () => {
+        (await safeMintable.balanceOf(owner)).toNumber().should.be.equal(0);
     });
 
     /**
      * Test minting.
-     * @test {SafeMintable#mint}
+     * @test {Mintable#mint}
      */
-    it('Minting not allowed to general public.', async () => {
+    it('does not allow minting to general public.', async () => {
         await expectRevert(
-            safeMintable.mint(initialSupply, { from: user1 }),
+            safeMintable.mint(oneToken, { from: user1 }),
             'Ownable: caller is not the owner',
         );
     });
 
-    it('Minting initial supply.', async () => {
-        const transaction = await safeMintable.mint(initialSupply, { from: owner });
-
-        const firstEvent = transaction.logs[0];
-        const eventName = firstEvent.event;
-        const eventAmount = firstEvent.args.amount;
-
-        eventName.should.be.equal('Minted');
-        eventAmount.toNumber().should.be.equal(initialSupply);
-
-        (await safeMintable.balanceOf(owner)).toNumber().should.be.equal(initialSupply);
-    });
-
-    /**
-     * Test burning.
-     * @test {SafeMintable#burn}
-     */
-
-    it('Burning above balance not allowed.', async () => {
+    it('does not allow burning not existing tokens.', async () => {
         await expectRevert(
-            safeMintable.burn(initialSupply, { from: user1 }),
+            safeMintable.burn(oneToken, { from: user1 }),
             'SafeMath: subtraction overflow',
         );
     });
 
-    it('Burning full balance.', async () => {
-        await safeMintable.mint(initialSupply, { from: owner });
-
-        const transaction = await safeMintable.burn(initialSupply, { from: owner });
-        const firstEvent = transaction.logs[0];
-        const eventName = firstEvent.event;
-        const eventAmount = firstEvent.args.amount;
-
-        eventName.should.be.equal('Burned');
-        eventAmount.toNumber().should.be.equal(initialSupply);
-
-        (await safeMintable.balanceOf(owner)).toNumber().should.be.equal(0);
-    });
-
-    it('Burning partial balance.', async () => {
-        const amountBurned = 1;
-        await safeMintable.mint(initialSupply, { from: owner });
-
-        await safeMintable.burn(amountBurned, { from: owner });
-
-        (await safeMintable.balanceOf(owner)).toNumber().should.be.equal(initialSupply - amountBurned);
-    });
-
-    /**
-     * Test transferring balances.
-     * @test {SafeMintable#transfer}
-     */
-    it('Transfer above balance.', async () => {
+    it('does not allow transferring not existing tokens.', async () => {
         await expectRevert(
-            safeMintable.transfer(owner, 1, { from: user1 }),
+            safeMintable.transfer(owner, oneToken, { from: user1 }),
             'SafeMath: subtraction overflow',
         );
     });
 
-    it('Transfer below balance.', async () => {
-        const transferredAmount = 1;
-        await safeMintable.mint(initialSupply, { from: owner });
-        const transaction = await safeMintable.transfer(user1, transferredAmount, { from: owner });
-        const firstEvent = transaction.logs[0];
-        const eventName = firstEvent.event;
-        const eventRecipient = firstEvent.args.recipient;
-        const eventAmount = firstEvent.args.amount;
+    it('mints tokens.', async () => {
+        await safeMintable.mint(currencyToMint, { from: owner });
 
-        eventName.should.be.equal('Transferred');
-        eventRecipient.should.be.equal(user1);
-        eventAmount.toNumber().should.be.equal(transferredAmount);
-
-        (await safeMintable.balanceOf(owner)).toNumber().should.be.equal(initialSupply - transferredAmount);
-        (await safeMintable.balanceOf(user1)).toNumber().should.be.equal(transferredAmount);
+        (await safeMintable.balanceOf(owner)).toNumber().should.be.equal(currencyToMint);
     });
 
-    it('Transfer at balance.', async () => {
-        await safeMintable.mint(initialSupply, { from: owner });
-        const transaction = await safeMintable.transfer(user1, initialSupply, { from: owner });
+    it('emits Minted events on minting.', async () => {
+        expectEvent(
+            await safeMintable.mint(oneToken, { from: owner }),
+            'Minted',
+            {
+                amount: oneToken.toString(),
+            },
+        );
+    });
 
-        (await safeMintable.balanceOf(owner)).toNumber().should.be.equal(0);
-        (await safeMintable.balanceOf(user1)).toNumber().should.be.equal(initialSupply);
+    describe('With a positive token balance', () => {
+        const currencyToBurn = currencyToMint - 1;
+        const currencyToTransfer = currencyToMint - 1;
+
+        beforeEach(async () => {
+            await safeMintable.mint(currencyToMint, { from: owner });
+        });
+
+        it('burns some tokens.', async () => {
+            await safeMintable.burn(currencyToBurn, { from: owner });
+            (await safeMintable.balanceOf(owner)).toNumber().should.be.equal(
+                currencyToMint - currencyToBurn,
+            );
+        });
+
+        it('burns all tokens.', async () => {
+            await safeMintable.burn(currencyToMint, { from: owner });
+            (await safeMintable.balanceOf(owner)).toNumber().should.be.equal(0);
+        });
+
+        it('emits Burnt events on burning.', async () => {
+            expectEvent(
+                await safeMintable.burn(oneToken, { from: owner }),
+                'Burnt',
+                {
+                    amount: oneToken.toString(),
+                },
+            );
+        });
+
+        it('transfers some tokens.', async () => {
+            await safeMintable.transfer(user1, currencyToTransfer, { from: owner });
+
+            (await safeMintable.balanceOf(owner)).toNumber().should.be.equal(
+                currencyToMint - currencyToTransfer,
+            );
+            (await safeMintable.balanceOf(user1)).toNumber().should.be.equal(currencyToTransfer);
+        });
+
+        it('transfers all tokens.', async () => {
+            safeMintable.transfer(user1, currencyToMint, { from: owner });
+
+            (await safeMintable.balanceOf(owner)).toNumber().should.be.equal(0);
+            (await safeMintable.balanceOf(user1)).toNumber().should.be.equal(currencyToMint);
+        });
+
+        it('emits Transferred events on burning.', async () => {
+            expectEvent(
+                await safeMintable.transfer(user1, oneToken, { from: owner }),
+                'Transferred',
+                {
+                    amount: oneToken.toString(),
+                    recipient: user1,
+                },
+            );
+        });
     });
 });
