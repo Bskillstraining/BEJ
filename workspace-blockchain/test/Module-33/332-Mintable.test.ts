@@ -38,29 +38,7 @@ contract('Mintable', (accounts) => {
 
     it('mints tokens.', async () => {
         await mintable.mint(currencyToMint, { from: owner });
-
         (await mintable.balanceOf(owner)).toNumber().should.be.equal(initialSupply + currencyToMint);
-
-        const currencyToBurn = 10000;
-
-        describe('With a positive token balance', () => {
-            it('burns tokens.', async () => {
-                await mintable.burn(currencyToBurn, { from: owner });
-                (await mintable.balanceOf(owner)).toNumber().should.be.equal(
-                    initialSupply + currencyToMint - currencyToBurn,
-                );
-            });
-
-            it('emits Burnt events on burning.', async () => {
-                expectEvent(
-                    await mintable.burn(currencyToBurn, { from: owner }),
-                    'Burnt',
-                    {
-                        amount: currencyToBurn.toString(),
-                    },
-                );
-            });
-        });
     });
 
     it('emits Minted events on minting.', async () => {
@@ -71,5 +49,30 @@ contract('Mintable', (accounts) => {
                 amount: currencyToMint.toString(),
             },
         );
+    });
+
+    describe('With a positive token balance', () => {
+        const currencyToBurn = 10000;
+
+        beforeEach(async () => {
+            await mintable.mint(currencyToMint, { from: owner });
+        });
+
+        it('burns tokens.', async () => {
+            await mintable.burn(currencyToBurn, { from: owner });
+            (await mintable.balanceOf(owner)).toNumber().should.be.equal(
+                initialSupply + currencyToMint - currencyToBurn,
+            );
+        });
+
+        it('emits Burnt events on burning.', async () => {
+            expectEvent(
+                await mintable.burn(currencyToBurn, { from: owner }),
+                'Burnt',
+                {
+                    amount: currencyToBurn.toString(),
+                },
+            );
+        });
     });
 });
