@@ -10,7 +10,7 @@ import "./331-Cryptocurrency.sol";
  */
 contract Mintable is Cryptocurrency, Ownable {
     event Minted(uint256 amount);
-    event Burned(uint256 amount);
+    event Burnt(uint256 amount);
 
     constructor (uint256 initialSupply)
         Cryptocurrency(initialSupply)
@@ -30,6 +30,6 @@ contract Mintable is Cryptocurrency, Ownable {
         public
     {
         balances[msg.sender] -= amount;
-        emit Burned({ amount: amount});
+        emit Burnt(amount);
     }
 }

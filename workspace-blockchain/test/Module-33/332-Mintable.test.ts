@@ -1,7 +1,7 @@
 import { should } from 'chai';
 import { MintableInstance } from '../../types/truffle-contracts';
 
-const { expectRevert } = require('@openzeppelin/test-helpers');
+const { expectRevert, expectEvent } = require('@openzeppelin/test-helpers');
 
 const Mintable = artifacts.require('Mintable') as Truffle.Contract<MintableInstance>;
 
@@ -25,19 +25,47 @@ contract('Mintable', (accounts) => {
      * Test minting.
      * @test {Mintable#mint}
      */
-    it('Minting not allowed to general public.', async () => {
+    it('does not allow minting to general public.', async () => {
         await expectRevert(
             mintable.mint(currencyToMint, { from: user1 }),
             'Ownable: caller is not the owner',
         );
     });
 
-    it('Burning tokens.', async () => {
-        const amountBurned = 10000;
+    it('mints tokens.', async () => {
         await mintable.mint(currencyToMint, { from: owner });
 
-        await mintable.burn(amountBurned, { from: owner });
+        (await mintable.balanceOf(owner)).toNumber().should.be.equal(initialSupply + currencyToMint);
 
-        (await mintable.balanceOf(owner)).toNumber().should.be.equal(currencyToMint - amountBurned);
+        const currencyToBurn = 10000;
+
+        describe('With a positive token balance', () => {
+            it('burns tokens.', async () => {
+                await mintable.burn(currencyToBurn, { from: owner });
+                (await mintable.balanceOf(owner)).toNumber().should.be.equal(
+                    initialSupply + currencyToMint - currencyToBurn,
+                );
+            });
+
+            it('emits Burnt events on burning.', async () => {
+                expectEvent(
+                    await mintable.burn(currencyToBurn, { from: owner }),
+                    'Burnt',
+                    {
+                        amount: currencyToBurn.toString(),
+                    },
+                );
+            });
+        });
+    });
+
+    it('emits Minted events on minting.', async () => {
+        expectEvent(
+            await mintable.mint(currencyToMint, { from: owner }),
+            'Minted',
+            {
+                amount: currencyToMint.toString(),
+            },
+        );
     });
 });
