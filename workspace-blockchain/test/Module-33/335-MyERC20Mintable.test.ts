@@ -1,148 +1,96 @@
 import { should } from 'chai';
 import { MyERC20MintableInstance } from '../../types/truffle-contracts';
 
-const { expectRevert } = require('@openzeppelin/test-helpers');
+const { expectEvent, expectRevert } = require('@openzeppelin/test-helpers');
 
-const MyERC20 = artifacts.require('MyERC20Mintable') as Truffle.Contract<MyERC20MintableInstance>;
+const MyERC20Mintable = artifacts.require('MyERC20Mintable') as Truffle.Contract<MyERC20MintableInstance>;
 
 should();
 
-/** @test {MyERC20} contract */
-contract('MyERC20', (accounts) => {
+/** @test {SafeMintable} contract */
+contract('SafeMintable', (accounts) => {
 
-    let myERC20: MyERC20MintableInstance;
+    let myERC20Mintable: MyERC20MintableInstance;
 
     const owner = accounts[0];
     const user1 = accounts[1];
     const zeroAddress = '0x0000000000000000000000000000000000000000';
-    const initialSupply = 1000000;
+    const oneToken = 1;
+    const currencyToMint = 1000000;
 
     beforeEach(async () => {
-        myERC20 = await MyERC20.new({ from: owner });
+        myERC20Mintable = await MyERC20Mintable.new({ from: owner });
     });
 
-    /**
-     * Test the balance method
-     * @test {MyERC20#balanceOf}
-     */
-    /* it('Retrieve owner balance.', async () => {
-        const ownerBalance = await myERC20.balanceOf(owner, { from: owner });
-
-        (ownerBalance.toNumber()).should.be.equal(initialSupply);
-    }); */
-
-    /**
-     * Test the balance method
-     * @test {MyERC20#balanceOf}
-     */
-    it('Retrieve empty balance.', async () => {
-        const emptyBalance = await myERC20.balanceOf(user1, { from: owner });
-
-        (emptyBalance.toNumber()).should.be.equal(0);
+    it('mints initial supply.', async () => {
+        (await myERC20Mintable.balanceOf(owner)).toNumber().should.be.equal(0);
     });
 
     /**
      * Test minting.
-     * @test {MyERC20#mint}
+     * @test {Mintable#mint}
      */
-    it('Minting not allowed to general public.', async () => {
+    it('does not allow minting to general public.', async () => {
         await expectRevert(
-            myERC20.mint(user1, initialSupply, { from: user1 }),
+            myERC20Mintable.mint(user1, oneToken, { from: user1 }),
             'Ownable: caller is not the owner',
         );
     });
 
-    it('Minting initial supply.', async () => {
-        const transaction = await myERC20.mint(owner, initialSupply, { from: owner });
-
-        const firstEvent = transaction.logs[0];
-        const eventName = firstEvent.event;
-        const eventTo = firstEvent.args.to;
-        const eventFrom = firstEvent.args.from;
-        const eventValue = firstEvent.args.value;
-
-        eventName.should.be.equal('Transfer');
-        eventTo.should.be.equal(owner);
-        eventFrom.should.be.equal(zeroAddress);
-        eventValue.toNumber().should.be.equal(initialSupply);
-
-        (await myERC20.balanceOf(owner)).toNumber().should.be.equal(initialSupply);
-    });
-
-    /**
-     * Test burning.
-     * @test {MyERC20#burn}
-     */
-
-    it('Burning above balance not allowed.', async () => {
+    it('does not allow burning not existing tokens.', async () => {
         await expectRevert(
-            myERC20.burn(initialSupply, { from: user1 }),
+            myERC20Mintable.burn(oneToken, { from: user1 }),
             'ERC20: burn amount exceeds balance',
         );
     });
 
-    it('Burning full balance.', async () => {
-        await myERC20.mint(owner, initialSupply, { from: owner });
+    it('mints tokens.', async () => {
+        await myERC20Mintable.mint(owner, currencyToMint, { from: owner });
 
-        const transaction = await myERC20.burn(initialSupply, { from: owner });
-        const firstEvent = transaction.logs[0];
-        const eventName = firstEvent.event;
-        const eventTo = firstEvent.args.to;
-        const eventFrom = firstEvent.args.from;
-        const eventValue = firstEvent.args.value;
-
-        eventName.should.be.equal('Transfer');
-        eventTo.should.be.equal(zeroAddress);
-        eventFrom.should.be.equal(owner);
-        eventValue.toNumber().should.be.equal(initialSupply);
-
-        (await myERC20.balanceOf(owner)).toNumber().should.be.equal(0);
+        (await myERC20Mintable.balanceOf(owner)).toNumber().should.be.equal(currencyToMint);
     });
 
-    it('Burning partial balance.', async () => {
-        const amountBurned = 1;
-        await myERC20.mint(owner,initialSupply, { from: owner });
-
-        await myERC20.burn(amountBurned, { from: owner });
-
-        (await myERC20.balanceOf(owner)).toNumber().should.be.equal(initialSupply - amountBurned);
-    });
-
-    /**
-     * Test transferring balances.
-     * @test {MyERC20#transfer}
-     */
-    it('Transfer above balance.', async () => {
-        await expectRevert(
-            myERC20.transfer(owner, 1, { from: user1 }),
-            'ERC20: transfer amount exceeds balance',
+    it('emits Transfer events on minting.', async () => {
+        expectEvent(
+            await myERC20Mintable.mint(owner, oneToken, { from: owner }),
+            'Transfer',
+            {
+                from: zeroAddress,
+                to: owner,
+                value: oneToken.toString(),
+            },
         );
     });
 
-    it('Transfer below balance.', async () => {
-        const transferredAmount = 1;
-        await myERC20.mint(owner, initialSupply, { from: owner });
-        const transaction = await myERC20.transfer(user1, transferredAmount, { from: owner });
-        const firstEvent = transaction.logs[0];
-        const eventName = firstEvent.event;
-        const eventTo = firstEvent.args.to;
-        const eventFrom = firstEvent.args.from;
-        const eventValue = firstEvent.args.value;
+    describe('With a positive token balance', () => {
+        const currencyToBurn = currencyToMint - 1;
 
-        eventName.should.be.equal('Transfer');
-        eventTo.should.be.equal(user1);
-        eventFrom.should.be.equal(owner);
-        eventValue.toNumber().should.be.equal(transferredAmount);
+        beforeEach(async () => {
+            await myERC20Mintable.mint(owner, currencyToMint, { from: owner });
+        });
 
-        (await myERC20.balanceOf(owner)).toNumber().should.be.equal(initialSupply - transferredAmount);
-        (await myERC20.balanceOf(user1)).toNumber().should.be.equal(transferredAmount);
-    });
+        it('burns some tokens.', async () => {
+            await myERC20Mintable.burn(currencyToBurn, { from: owner });
+            (await myERC20Mintable.balanceOf(owner)).toNumber().should.be.equal(
+                currencyToMint - currencyToBurn,
+            );
+        });
 
-    it('Transfer at balance.', async () => {
-        await myERC20.mint(owner, initialSupply, { from: owner });
-        const transaction = await myERC20.transfer(user1, initialSupply, { from: owner });
+        it('burns all tokens.', async () => {
+            await myERC20Mintable.burn(currencyToMint, { from: owner });
+            (await myERC20Mintable.balanceOf(owner)).toNumber().should.be.equal(0);
+        });
 
-        (await myERC20.balanceOf(owner)).toNumber().should.be.equal(0);
-        (await myERC20.balanceOf(user1)).toNumber().should.be.equal(initialSupply);
+        it('emits Transfer events on burning.', async () => {
+            expectEvent(
+                await myERC20Mintable.burn(oneToken, { from: owner }),
+                'Transfer',
+                {
+                    from: owner,
+                    to: zeroAddress,
+                    value: oneToken.toString(),
+                },
+            );
+        });
     });
 });
