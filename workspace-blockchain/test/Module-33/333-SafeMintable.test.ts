@@ -139,7 +139,7 @@ contract('SafeMintable', (accounts) => {
             (await safeMintable.balanceOf(user1)).toNumber().should.be.equal(currencyToMint);
         });
 
-        it('emits Transferred events on burning.', async () => {
+        it('emits Transferred events on transferring.', async () => {
             expectEvent(
                 await safeMintable.transfer(user1, oneToken, { from: owner }),
                 'Transferred',
