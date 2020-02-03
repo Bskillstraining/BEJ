@@ -1,7 +1,4 @@
-import { should } from 'chai';
 import { PublicStorageInstance } from '../../types/truffle-contracts';
-
-should();
 
 const PublicStorage = artifacts.require('PublicStorage') as Truffle.Contract<PublicStorageInstance>;
 
@@ -24,7 +21,7 @@ contract('PublicStorage', () => {
         await publicStorage.set(valueToStore);
         const storedData = await publicStorage.storedData();
 
-        (storedData.toNumber()).should.be.equal(valueToStore);
+        assert.equal(storedData.toNumber(), valueToStore);
     });
 
     /**
@@ -34,6 +31,6 @@ contract('PublicStorage', () => {
     it('Retrieve a value before setting it.', async () => {
         const storedData = await publicStorage.storedData();
 
-        (storedData.toNumber()).should.be.equal(0);
+        assert.equal(storedData.toNumber(), 0);
     });
 });

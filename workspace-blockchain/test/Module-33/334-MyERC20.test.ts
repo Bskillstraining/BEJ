@@ -1,11 +1,8 @@
-import { should } from 'chai';
 import { MyERC20MockInstance } from '../../types/truffle-contracts';
 
 const { expectEvent, expectRevert } = require('@openzeppelin/test-helpers');
 
 const MyERC20 = artifacts.require('MyERC20') as Truffle.Contract<MyERC20MockInstance>;
-
-should();
 
 /** @test {MyERC20} contract */
 contract('MyERC20', (accounts) => {
@@ -22,7 +19,10 @@ contract('MyERC20', (accounts) => {
     });
 
     it('mints initial supply.', async () => {
-        (await myERC20.balanceOf(owner)).toNumber().should.be.equal(initialSupply);
+        assert.equal(
+            (await myERC20.balanceOf(owner)).toNumber(),
+            initialSupply,
+        );
     });
 
     it('does not allow transferring not existing tokens.', async () => {
@@ -35,17 +35,27 @@ contract('MyERC20', (accounts) => {
     it('transfers some tokens.', async () => {
         await myERC20.transfer(user1, oneToken, { from: owner });
 
-        (await myERC20.balanceOf(owner)).toNumber().should.be.equal(
+        assert.equal(
+            (await myERC20.balanceOf(owner)).toNumber(),
             initialSupply - oneToken,
         );
-        (await myERC20.balanceOf(user1)).toNumber().should.be.equal(oneToken);
+        assert.equal(
+            (await myERC20.balanceOf(user1)).toNumber(),
+            oneToken,
+        );
     });
 
     it('transfers all tokens.', async () => {
         myERC20.transfer(user1, initialSupply, { from: owner });
 
-        (await myERC20.balanceOf(owner)).toNumber().should.be.equal(0);
-        (await myERC20.balanceOf(user1)).toNumber().should.be.equal(initialSupply);
+        assert.equal(
+            (await myERC20.balanceOf(owner)).toNumber(),
+            0,
+        );
+        assert.equal(
+            (await myERC20.balanceOf(user1)).toNumber(),
+            initialSupply,
+        );
     });
 
     it('emits Transfer events on transferring.', async () => {

@@ -1,11 +1,11 @@
-import { should } from 'chai';
+
 import { MyERC20DetailedInstance } from '../../types/truffle-contracts';
 
 const { expectRevert } = require('@openzeppelin/test-helpers');
 
 const MyERC20Detailed = artifacts.require('MyERC20Detailed') as Truffle.Contract<MyERC20DetailedInstance>;
 
-should();
+;
 
 /** @test {MyERC20Detailed} contract */
 contract('MyERC20Detailed', (accounts) => {
@@ -26,8 +26,17 @@ contract('MyERC20Detailed', (accounts) => {
      * @test {MyERC20Detailed#name}, {MyERC20Detailed#symbol} and {MyERC20Detailed#decimals}
      */
     it('Retrieve token details.', async () => {
-        (await myERC20.name()).should.be.equal(name);
-        (await myERC20.symbol()).should.be.equal(symbol);
-        (await myERC20.decimals()).toNumber().should.be.equal(decimals);
+        assert.equal(
+            await myERC20.name(),
+            name,
+        );
+        assert.equal(
+            await myERC20.symbol(),
+            symbol,
+        );
+        assert.equal(
+            (await myERC20.decimals()).toNumber(),
+            decimals,
+        );
     });
 });

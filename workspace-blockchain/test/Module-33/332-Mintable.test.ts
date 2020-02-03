@@ -1,11 +1,8 @@
-import { should } from 'chai';
 import { MintableInstance } from '../../types/truffle-contracts';
 
 const { expectRevert, expectEvent } = require('@openzeppelin/test-helpers');
 
 const Mintable = artifacts.require('Mintable') as Truffle.Contract<MintableInstance>;
-
-should();
 
 /** @test {Mintable} contract */
 contract('Mintable', (accounts) => {
@@ -22,7 +19,10 @@ contract('Mintable', (accounts) => {
     });
 
     it('mints initial supply.', async () => {
-        (await mintable.balanceOf(owner)).toNumber().should.be.equal(initialSupply);
+        assert.equal(
+            (await mintable.balanceOf(owner)).toNumber(),
+            initialSupply,
+        );
     });
 
     /**
@@ -38,7 +38,10 @@ contract('Mintable', (accounts) => {
 
     it('mints tokens.', async () => {
         await mintable.mint(currencyToMint, { from: owner });
-        (await mintable.balanceOf(owner)).toNumber().should.be.equal(initialSupply + currencyToMint);
+        assert.equal(
+            (await mintable.balanceOf(owner)).toNumber(),
+            initialSupply + currencyToMint,
+        );
     });
 
     it('emits Minted events on minting.', async () => {
@@ -60,7 +63,8 @@ contract('Mintable', (accounts) => {
 
         it('burns tokens.', async () => {
             await mintable.burn(currencyToBurn, { from: owner });
-            (await mintable.balanceOf(owner)).toNumber().should.be.equal(
+            assert.equal(
+                (await mintable.balanceOf(owner)).toNumber(),
                 initialSupply + currencyToMint - currencyToBurn,
             );
         });

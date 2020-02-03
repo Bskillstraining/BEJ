@@ -1,11 +1,8 @@
-import { should } from 'chai';
 import { DocumentRegistryInstance } from '../../types/truffle-contracts';
 
 const { expectRevert, expectEvent } = require('@openzeppelin/test-helpers');
 
-const DocumentRegistry = artifacts.require('./Module-32/DocumentRegistry.sol') as Truffle.Contract<DocumentRegistryInstance>;
-should();
-
+const DocumentRegistry = artifacts.require('DocumentRegistry') as Truffle.Contract<DocumentRegistryInstance>;
 
 /** @test {DocumentRegistry} contract */
 contract('DocumentRegistry', (accounts) => {
@@ -29,7 +26,7 @@ contract('DocumentRegistry', (accounts) => {
         await documentRegistry.set(hashToStore, { from: owner });
         const timestamp = await documentRegistry.get(hashToStore, { from: owner });
 
-        (timestamp.toNumber()).should.not.be.equal(0);
+        assert.notEqual(timestamp.toNumber(), 0);
     });
 
     /**
@@ -40,7 +37,7 @@ contract('DocumentRegistry', (accounts) => {
         const transaction = await documentRegistry.set(hashToStore, { from: owner });
         const timestamp = await documentRegistry.get(hashToStore, { from: owner });
 
-        (timestamp.toNumber()).should.be.equal(transaction.receipt.blockNumber);
+        assert.equal(timestamp.toNumber(), transaction.receipt.blockNumber);
     });
 
     /**

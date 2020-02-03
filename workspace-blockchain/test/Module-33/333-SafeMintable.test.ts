@@ -1,15 +1,10 @@
-import { should } from 'chai';
 import { MintableInstance } from '../../types/truffle-contracts';
 import { SafeMintableInstance } from '../../types/truffle-contracts';
-
-// const { expectEvent, expectRevert } = require('@openzeppelin/test-helpers');
 
 const { expectEvent, expectRevert } = require('@openzeppelin/test-helpers');
 
 const Mintable = artifacts.require('Mintable') as Truffle.Contract<MintableInstance>;
 const SafeMintable = artifacts.require('SafeMintable') as Truffle.Contract<SafeMintableInstance>;
-
-should();
 
 /** @test {Mintable} contract */
 contract('Mintable', (accounts) => {
@@ -49,7 +44,10 @@ contract('SafeMintable', (accounts) => {
     });
 
     it('mints initial supply.', async () => {
-        (await safeMintable.balanceOf(owner)).toNumber().should.be.equal(0);
+        assert.equal(
+            (await safeMintable.balanceOf(owner)).toNumber(),
+            0,
+        );
     });
 
     /**
@@ -80,7 +78,10 @@ contract('SafeMintable', (accounts) => {
     it('mints tokens.', async () => {
         await safeMintable.mint(currencyToMint, { from: owner });
 
-        (await safeMintable.balanceOf(owner)).toNumber().should.be.equal(currencyToMint);
+        assert.equal(
+            (await safeMintable.balanceOf(owner)).toNumber(),
+            currencyToMint,
+        );
     });
 
     it('emits Minted events on minting.', async () => {
@@ -103,14 +104,18 @@ contract('SafeMintable', (accounts) => {
 
         it('burns some tokens.', async () => {
             await safeMintable.burn(currencyToBurn, { from: owner });
-            (await safeMintable.balanceOf(owner)).toNumber().should.be.equal(
+            assert.equal(
+                (await safeMintable.balanceOf(owner)).toNumber(),
                 currencyToMint - currencyToBurn,
             );
         });
 
         it('burns all tokens.', async () => {
             await safeMintable.burn(currencyToMint, { from: owner });
-            (await safeMintable.balanceOf(owner)).toNumber().should.be.equal(0);
+            assert.equal(
+                (await safeMintable.balanceOf(owner)).toNumber(),
+                0
+            );
         });
 
         it('emits Burnt events on burning.', async () => {
@@ -126,17 +131,27 @@ contract('SafeMintable', (accounts) => {
         it('transfers some tokens.', async () => {
             await safeMintable.transfer(user1, currencyToTransfer, { from: owner });
 
-            (await safeMintable.balanceOf(owner)).toNumber().should.be.equal(
+            assert.equal(
+                (await safeMintable.balanceOf(owner)).toNumber(),
                 currencyToMint - currencyToTransfer,
             );
-            (await safeMintable.balanceOf(user1)).toNumber().should.be.equal(currencyToTransfer);
+            assert.equal(
+                (await safeMintable.balanceOf(user1)).toNumber(),
+                currencyToTransfer,
+            );
         });
 
         it('transfers all tokens.', async () => {
             safeMintable.transfer(user1, currencyToMint, { from: owner });
 
-            (await safeMintable.balanceOf(owner)).toNumber().should.be.equal(0);
-            (await safeMintable.balanceOf(user1)).toNumber().should.be.equal(currencyToMint);
+            assert.equal(
+                (await safeMintable.balanceOf(owner)).toNumber(),
+                0,
+            );
+            assert.equal(
+                (await safeMintable.balanceOf(user1)).toNumber(),
+                currencyToMint,
+            );
         });
 
         it('emits Transferred events on transferring.', async () => {

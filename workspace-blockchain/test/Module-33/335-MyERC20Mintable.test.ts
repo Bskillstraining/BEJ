@@ -1,11 +1,8 @@
-import { should } from 'chai';
 import { MyERC20MintableInstance } from '../../types/truffle-contracts';
 
 const { expectEvent, expectRevert } = require('@openzeppelin/test-helpers');
 
 const MyERC20Mintable = artifacts.require('MyERC20Mintable') as Truffle.Contract<MyERC20MintableInstance>;
-
-should();
 
 /** @test {SafeMintable} contract */
 contract('SafeMintable', (accounts) => {
@@ -23,7 +20,10 @@ contract('SafeMintable', (accounts) => {
     });
 
     it('mints initial supply.', async () => {
-        (await myERC20Mintable.balanceOf(owner)).toNumber().should.be.equal(0);
+        assert.equal(
+            (await myERC20Mintable.balanceOf(owner)).toNumber(),
+            0,
+        );
     });
 
     /**
@@ -47,7 +47,10 @@ contract('SafeMintable', (accounts) => {
     it('mints tokens.', async () => {
         await myERC20Mintable.mint(owner, currencyToMint, { from: owner });
 
-        (await myERC20Mintable.balanceOf(owner)).toNumber().should.be.equal(currencyToMint);
+        assert.equal(
+            (await myERC20Mintable.balanceOf(owner)).toNumber(),
+            currencyToMint,
+        );
     });
 
     it('emits Transfer events on minting.', async () => {
@@ -71,14 +74,18 @@ contract('SafeMintable', (accounts) => {
 
         it('burns some tokens.', async () => {
             await myERC20Mintable.burn(currencyToBurn, { from: owner });
-            (await myERC20Mintable.balanceOf(owner)).toNumber().should.be.equal(
+            assert.equal(
+                (await myERC20Mintable.balanceOf(owner)).toNumber(),
                 currencyToMint - currencyToBurn,
             );
         });
 
         it('burns all tokens.', async () => {
             await myERC20Mintable.burn(currencyToMint, { from: owner });
-            (await myERC20Mintable.balanceOf(owner)).toNumber().should.be.equal(0);
+            assert.equal(
+                (await myERC20Mintable.balanceOf(owner)).toNumber(),
+                0,
+            );
         });
 
         it('emits Transfer events on burning.', async () => {

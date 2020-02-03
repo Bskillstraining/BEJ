@@ -1,7 +1,4 @@
-import { should } from 'chai';
 import { SimpleTableInstance } from '../../types/truffle-contracts';
-
-should();
 
 const SimpleTable = artifacts.require('SimpleTable') as Truffle.Contract<SimpleTableInstance>;
 
@@ -30,8 +27,8 @@ contract('SimpleTable', () => {
         const storedValueX = await simpleTable.get(keyX);
         const storedValueY = await simpleTable.get(keyY);
 
-        (storedValueX.toNumber()).should.be.equal(valueX);
-        (storedValueY.toNumber()).should.be.equal(valueY);
+        assert.equal(storedValueX.toNumber(), valueX);
+        assert.equal(storedValueY.toNumber(), valueY);
     });
 
     /**
@@ -41,6 +38,6 @@ contract('SimpleTable', () => {
     it('Retrieve a non existing value.', async () => {
         const storedValueZ = await simpleTable.get(keyZ);
 
-        (storedValueZ.toNumber()).should.be.equal(0);
+        assert.equal(storedValueZ.toNumber(), 0);
     });
 });

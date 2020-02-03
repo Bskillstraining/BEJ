@@ -1,10 +1,8 @@
-import { should } from 'chai';
 import { ModifierTableInstance } from '../../types/truffle-contracts';
 
 const { expectRevert } = require('@openzeppelin/test-helpers');
 
 const ModifierTable = artifacts.require('./Module-32/ModifierTable.sol') as Truffle.Contract<ModifierTableInstance>;
-should();
 
 /** @test {ModifierTable} contract */
 contract('ModifierTable', (accounts) => {
@@ -29,7 +27,7 @@ contract('ModifierTable', (accounts) => {
         await modifierTable.set(key, value, { from: owner });
         const storedValue = await modifierTable.get(key, { from: owner });
 
-        (storedValue.toNumber()).should.be.equal(value);
+        assert.equal(storedValue.toNumber(), value);
     });
 
     /**

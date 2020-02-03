@@ -1,7 +1,4 @@
-import { should } from 'chai';
 import { ProprietaryTableInstance } from '../../types/truffle-contracts';
-
-should();
 
 const ProprietaryTable = artifacts.require('ProprietaryTable') as Truffle.Contract<ProprietaryTableInstance>;
 const { expectRevert } = require('@openzeppelin/test-helpers');
@@ -29,7 +26,7 @@ contract('ProprietaryTable', (accounts) => {
         await proprietaryTable.set(key, value, { from: owner });
         const storedValue = await proprietaryTable.get(key, { from: owner });
 
-        (storedValue.toNumber()).should.be.equal(value);
+        assert.equal(storedValue.toNumber(), value);
     });
 
     /**

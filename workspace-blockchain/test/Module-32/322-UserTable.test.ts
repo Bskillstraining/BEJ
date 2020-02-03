@@ -1,7 +1,4 @@
-import { should } from 'chai';
 import { UserTableInstance } from '../../types/truffle-contracts';
-
-should();
 
 const UserTable = artifacts.require('./Module-32/UserTable.sol') as Truffle.Contract<UserTableInstance>;
 
@@ -29,7 +26,7 @@ contract('UserTable', (accounts) => {
         const storedValueOne = await userTable.get({ from: userOne });
         const storedValueTwo = await userTable.get({ from: userTwo });
 
-        (storedValueOne.toNumber()).should.be.equal(valueOne);
-        (storedValueTwo.toNumber()).should.be.equal(valueTwo);
+        assert.equal(storedValueOne.toNumber(), valueOne);
+        assert.equal(storedValueTwo.toNumber(), valueTwo);
     });
 });

@@ -1,7 +1,4 @@
-import { should } from 'chai';
 import { SimpleStorageInstance } from '../../types/truffle-contracts';
-
-should();
 
 const SimpleStorage = artifacts.require('SimpleStorage') as Truffle.Contract<SimpleStorageInstance>;
 
@@ -19,7 +16,7 @@ contract('SimpleStorage', () => {
         await simpleStorage.set(valueToStore);
         const storedData = await simpleStorage.get();
 
-        (storedData.toNumber()).should.be.equal(valueToStore);
+        assert.equal(storedData.toNumber(), valueToStore);
     });
 
     /**
@@ -31,6 +28,6 @@ contract('SimpleStorage', () => {
 
         const storedData = await simpleStorage.get();
 
-        (storedData.toNumber()).should.be.equal(0);
+        assert.equal(storedData.toNumber(), 0);
     });
 });

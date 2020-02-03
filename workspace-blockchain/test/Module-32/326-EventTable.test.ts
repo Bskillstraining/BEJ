@@ -1,11 +1,8 @@
-import { should } from 'chai';
 import { EventTableInstance } from '../../types/truffle-contracts';
 
 const { expectRevert, expectEvent } = require('@openzeppelin/test-helpers');
 
 const EventTable = artifacts.require('./Module-32/EventTable.sol') as Truffle.Contract<EventTableInstance>;
-should();
-
 
 /** @test {EventTable} contract */
 contract('EventTable', (accounts) => {
@@ -30,7 +27,7 @@ contract('EventTable', (accounts) => {
         await eventTable.set(keyToStore, valueToStore, { from: owner });
         const storedValue = await eventTable.get(keyToStore, { from: owner });
 
-        (storedValue.toNumber()).should.be.equal(valueToStore);
+        assert.equal(storedValue.toNumber(), valueToStore);
     });
 
     /**
@@ -54,9 +51,9 @@ contract('EventTable', (accounts) => {
         const eventKey = firstEvent.args.key;
         const eventValue = firstEvent.args.value;
 
-        eventName.should.be.equal('ValueAdded');
-        eventKey.toNumber().should.be.equal(keyToStore);
-        eventValue.toNumber().should.be.equal(valueToStore);
+        assert.equal(eventName, 'ValueAdded');
+        assert.equal(eventKey.toNumber(), keyToStore);
+        assert.equal(eventValue.toNumber(), valueToStore);
     });
 
     /**
