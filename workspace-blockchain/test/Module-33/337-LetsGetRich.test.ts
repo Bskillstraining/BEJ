@@ -32,21 +32,18 @@ contract('MyERC20Detailed', (accounts) => {
         await myERC20.transfer(user2, tokensToTransfer.toString(), { from: user1 });
 
         const user1Balance = initialSupply.minus(tokensToTransfer);
-        assert.equal(
-            (await myERC20.balanceOf(user1)).toString(),
-            user1Balance.toString(),
+        assert.isTrue(
+            (new BigNumber(await myERC20.balanceOf(user1))).eq(user1Balance),
         );
 
         const ownerBalance = transactionFee;
-        assert.equal(
-            (await myERC20.balanceOf(owner)).toString(),
-            ownerBalance.toString(),
+        assert.isTrue(
+            (new BigNumber(await myERC20.balanceOf(owner))).eq(ownerBalance),
         );
 
         const user2Balance = tokensToTransfer.minus(transactionFee);
-        assert.equal(
-            (await myERC20.balanceOf(user2)).toString(),
-            user2Balance.toString(),
+        assert.isTrue(
+            (new BigNumber(await myERC20.balanceOf(user2))).eq(user2Balance),
         );
     });
 });

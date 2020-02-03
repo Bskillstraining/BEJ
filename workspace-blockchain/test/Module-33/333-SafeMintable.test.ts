@@ -1,3 +1,4 @@
+import { BigNumber } from 'bignumber.js';
 import { MintableInstance } from '../../types/truffle-contracts';
 import { SafeMintableInstance } from '../../types/truffle-contracts';
 
@@ -25,7 +26,7 @@ contract('Mintable', (accounts) => {
         // user1 has a balance of zero. If he burns tokens he shouldn't have a positive balance afterwards.
         // The test here is that Mintable CAN be exploted.
         // The balance after this exploit is 2**256-1 and chai doesn't work with BigNumbers, so we use `assert`
-        assert.isTrue((await mintable.balanceOf(user1)).gt('0'));
+        assert.isTrue(new BigNumber(await mintable.balanceOf(user1)).gt('0'));
     });
 });
 
