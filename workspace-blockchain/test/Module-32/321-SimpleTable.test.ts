@@ -6,12 +6,8 @@ const SimpleTable = artifacts.require('SimpleTable') as Truffle.Contract<SimpleT
 contract('SimpleTable', () => {
 
     let simpleTable: SimpleTableInstance;
-    const keyX = 1;
-    const keyY = 2;
-    const keyZ = 3;
-    const valueX = 4;
-    const valueY = 5;
-
+    const [ keyX, keyY, keyZ ] = [ 1, 2, 3 ];
+    const [ valueX, valueY ] = [ 4, 5 ];
 
     beforeEach(async () => {
         simpleTable = await SimpleTable.new();
@@ -24,11 +20,11 @@ contract('SimpleTable', () => {
     it('Store and retrieve a value.', async () => {
         await simpleTable.set(keyX, valueX);
         await simpleTable.set(keyY, valueY);
-        const storedValueX = await simpleTable.get(keyX);
-        const storedValueY = await simpleTable.get(keyY);
+        const x = await simpleTable.get(keyX);
+        const y = await simpleTable.get(keyY);
 
-        assert.equal(storedValueX.toNumber(), valueX);
-        assert.equal(storedValueY.toNumber(), valueY);
+        assert.equal(x.toNumber(), valueX);
+        assert.equal(y.toNumber(), valueY);
     });
 
     /**
@@ -36,8 +32,8 @@ contract('SimpleTable', () => {
      * @test {SimpleTable#get}
      */
     it('Retrieve a non existing value.', async () => {
-        const storedValueZ = await simpleTable.get(keyZ);
+        const z = await simpleTable.get(keyZ);
 
-        assert.equal(storedValueZ.toNumber(), 0);
+        assert.equal(z.toNumber(), 0);
     });
 });
