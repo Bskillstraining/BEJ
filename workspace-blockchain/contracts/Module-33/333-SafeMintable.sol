@@ -4,10 +4,7 @@ import "@openzeppelin/contracts/ownership/Ownable.sol";
 import "@openzeppelin/contracts/math/SafeMath.sol";
 
 
-/**
- * @title SafeMintable
- * @dev These contracts guide the user into building an ERC20 cryptocurrency.
- */
+/// @dev A cryptocurrency safe against overflow exploits
 contract SafeMintable is Ownable {
     using SafeMath for uint256;
 
@@ -17,11 +14,13 @@ contract SafeMintable is Ownable {
 
     mapping (address => uint256) internal balances;
 
+    /// @dev Initializes the cryptocurrency with a contract owner.
     constructor ()
         Ownable()
         public
     {}
 
+    /// @dev Transfers currency from the account of the caller to another account.
     function transfer(address recipient, uint256 amount)
         public
     {
@@ -30,6 +29,7 @@ contract SafeMintable is Ownable {
         emit Transferred(recipient, amount);
     }
 
+    /// @dev Create more currency in the account of the owner.
     function mint(uint256 amount)
         public
         onlyOwner
@@ -38,6 +38,7 @@ contract SafeMintable is Ownable {
         emit Minted(amount);
     }
 
+    /// @dev Destroy currency from the account of the owner.
     function burn(uint256 amount)
         public
     {
@@ -45,6 +46,7 @@ contract SafeMintable is Ownable {
         emit Burnt(amount);
     }
 
+    /// @dev Returns the balance of an account.
     function balanceOf(address account)
         public
         view

@@ -4,20 +4,19 @@ import "./336-MyERC20Detailed.sol";
 import "@openzeppelin/contracts/math/SafeMath.sol";
 
 
-/**
- * @title LetsGetRich
- * @dev These contracts guide the user into building an ERC20 cryptocurrency.
- */
+/// @dev Adds a fee on transactions to MyERC20Detailed
 contract LetsGetRich is MyERC20Detailed {
     using SafeMath for uint256;
 
-    uint256 private _fee = 1; // In basis points (0.01%)
+    uint256 internal _fee = 1; // In basis points (0.01%)
 
+    /// @dev Passes along the contructor parameters
     constructor (string memory name, string memory symbol, uint8 decimals)
         MyERC20Detailed(name, symbol, decimals)
         public
     {}
 
+    /// @dev Split transfers, sending a percentage to the contract owner.
     function transfer(address recipient, uint256 amount)
         public
         returns(bool)

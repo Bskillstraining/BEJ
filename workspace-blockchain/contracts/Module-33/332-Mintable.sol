@@ -4,20 +4,19 @@ import "@openzeppelin/contracts/ownership/Ownable.sol";
 import "./331-Cryptocurrency.sol";
 
 
-/**
- * @title Mintable
- * @dev These contracts guide the user into building an ERC20 cryptocurrency.
- */
+/// @dev A cryptocurrency with variable supply
 contract Mintable is Cryptocurrency, Ownable {
     event Minted(uint256 amount);
     event Burnt(uint256 amount);
 
+    /// @dev Initializes the cryptocurrency with an initial supply and a contract owner.
     constructor (uint256 initialSupply)
         Cryptocurrency(initialSupply)
         Ownable()
         public
     {}
 
+    /// @dev Create more currency in the account of the owner.
     function mint(uint256 amount)
         public
         onlyOwner
@@ -26,6 +25,7 @@ contract Mintable is Cryptocurrency, Ownable {
         emit Minted(amount);
     }
 
+    /// @dev Destroy currency from the account of the owner.
     function burn(uint256 amount)
         public
     {
