@@ -2,7 +2,7 @@ import { ModifierTableInstance } from '../../types/truffle-contracts';
 
 const { expectRevert } = require('@openzeppelin/test-helpers');
 
-const ModifierTable = artifacts.require('./Module-32/ModifierTable.sol') as Truffle.Contract<ModifierTableInstance>;
+const ModifierTable = artifacts.require('ModifierTable') as Truffle.Contract<ModifierTableInstance>;
 
 /** @test {ModifierTable} contract */
 contract('ModifierTable', (accounts) => {

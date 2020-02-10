@@ -1,7 +1,7 @@
 pragma solidity ^0.5.10;
 
 import "@openzeppelin/contracts/ownership/Ownable.sol";
-import "./331-Cryptocurrency.sol";
+import "./41-Cryptocurrency.sol";
 
 
 /// @dev A cryptocurrency with variable supply

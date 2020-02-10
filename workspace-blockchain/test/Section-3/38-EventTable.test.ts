@@ -2,7 +2,7 @@ import { EventTableInstance } from '../../types/truffle-contracts';
 
 const { expectRevert, expectEvent } = require('@openzeppelin/test-helpers');
 
-const EventTable = artifacts.require('./Module-32/EventTable.sol') as Truffle.Contract<EventTableInstance>;
+const EventTable = artifacts.require('EventTable') as Truffle.Contract<EventTableInstance>;
 
 /** @test {EventTable} contract */
 contract('EventTable', (accounts) => {

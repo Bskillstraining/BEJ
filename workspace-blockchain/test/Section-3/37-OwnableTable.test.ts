@@ -2,7 +2,7 @@ import { OwnableTableInstance } from '../../types/truffle-contracts';
 
 const { expectRevert } = require('@openzeppelin/test-helpers');
 
-const OwnableTable = artifacts.require('./Module-32/OwnableTable.sol') as Truffle.Contract<OwnableTableInstance>;
+const OwnableTable = artifacts.require('OwnableTable') as Truffle.Contract<OwnableTableInstance>;
 
 /** @test {OwnableTable} contract */
 contract('OwnableTable', (accounts) => {

@@ -1,6 +1,6 @@
 import { UserTableInstance } from '../../types/truffle-contracts';
 
-const UserTable = artifacts.require('./Module-32/UserTable.sol') as Truffle.Contract<UserTableInstance>;
+const UserTable = artifacts.require('UserTable') as Truffle.Contract<UserTableInstance>;
 
 /** @test {UserTable} contract */
 contract('UserTable', (accounts) => {
