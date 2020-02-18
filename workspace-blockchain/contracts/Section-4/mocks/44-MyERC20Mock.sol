@@ -1,6 +1,6 @@
 pragma solidity ^0.5.10;
 
-import "./../334-MyERC20.sol";
+import "./../44-MyERC20.sol";
 
 
 contract MyERC20Mock is MyERC20 {
