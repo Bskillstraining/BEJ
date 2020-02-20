@@ -15,13 +15,14 @@ contract('Holdings', (accounts) => {
     const user1 = accounts[1];
     const user2 = accounts[2];
     const initialSupply = 1000000;
+    const userSupply = initialSupply/2;
     const currencyToStore = 1000;
 
     beforeEach(async () => {
         currency = await MyERC20.new(initialSupply);
         holdings = await Holdings.new(currency.address);
-        await currency.transfer(user1, initialSupply/2, { from: owner });
-        await currency.transfer(user2, initialSupply/2, { from: owner });
+        await currency.transfer(user1, userSupply, { from: owner });
+        await currency.transfer(user2, userSupply, { from: owner });
     });
 
     /**
@@ -43,17 +44,21 @@ contract('Holdings', (accounts) => {
 
     it('stores currency.', async () => {
         await currency.approve(holdings.address, currencyToStore, { from: user1 });
-        expectEvent(
-            await holdings.store(currencyToStore, { from: user1 }),
+        await holdings.store(currencyToStore, { from: user1 });
+        /* expectEvent.inTransaction(
+            (await holdings.store(currencyToStore, { from: user1 })).tx,
+            MyERC20,
             'Transfer',
             {
                 from: user1.toString(),
                 to: currency.address.toString(),
                 value: currencyToStore.toString(),
             },
-        );
-        const balance = await currency.balanceOf(user1, { from: owner });
-        assert.equal(balance.toNumber(), 0);
+        ); */
+        const userBalance = await currency.balanceOf(user1, { from: owner });
+        const contractBalance = await currency.balanceOf(holdings.address, { from: owner });
+        assert.equal(userBalance.toNumber(), userSupply - currencyToStore);
+        assert.equal(contractBalance.toNumber(), currencyToStore);
     });
 
     describe('holding currency', () => {
@@ -70,17 +75,21 @@ contract('Holdings', (accounts) => {
         });
 
         it('releases currency.', async () => {
-            expectEvent(
-                await holdings.release(user2, { from: user1 }),
+            await holdings.release(user2, { from: user1 });
+            /* expectEvent.inTransaction(
+                (await holdings.release(user2, { from: user1 })).tx,
+                MyERC20,
                 'Transfer',
                 {
                     from: currency.address.toString(),
                     to: user2.toString(),
                     value: currencyToStore.toString(),
                 },
-            );
-            const balance = await currency.balanceOf(user2, { from: owner });
-            assert.equal(balance.toNumber(), initialSupply);
+            ); */
+            const userBalance = await currency.balanceOf(user2, { from: owner });
+            const contractBalance = await currency.balanceOf(holdings.address, { from: owner });
+            assert.equal(userBalance.toNumber(), userSupply + currencyToStore);
+            assert.equal(contractBalance.toNumber(), 0);
         });
     });
 });

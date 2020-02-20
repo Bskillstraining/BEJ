@@ -29,9 +29,9 @@ contract Classifieds {
     mapping(address => Trade) public trades;
 
     /// @dev Instantiate token contracts
-    constructor (address _currencyTokenAddress, address _itemTokenAddress) public {
-        currencyToken = IERC20(_currencyTokenAddress);
-        itemToken = IERC721(_itemTokenAddress);
+    constructor (address currencyTokenAddress, address itemTokenAddress) public {
+        currencyToken = IERC20(currencyTokenAddress);
+        itemToken = IERC721(itemTokenAddress);
     }
 
     /// @dev Posts a new trade. Puts item in escrow.

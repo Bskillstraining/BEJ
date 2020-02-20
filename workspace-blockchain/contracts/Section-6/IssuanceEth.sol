@@ -48,6 +48,43 @@ contract IssuanceEth is Ownable, ERC20, ERC20Detailed {
     }
 
     /**
+     * @dev Function for an investor to cancel his investment
+     */
+    function cancelInvestment() external {
+        require (
+            state == State.OPEN,
+            "Cannot cancel now."
+        );
+        require(
+            investments[msg.sender] > 0,
+            "No investments found."
+        );
+        uint256 amount = investments[msg.sender];
+        investments[msg.sender] = 0;
+        msg.sender.transfer(amount);
+        emit InvestmentCancelled(msg.sender, amount);
+    }
+
+    /**
+     * @notice Use this function to claim your issuance tokens
+     * @dev Each user will call this function on his behalf
+     */
+    function claim() external {
+        require(
+            state == State.LIVE,
+            "Cannot claim yet."
+        );
+        require(
+            investments[msg.sender] > 0,
+            "No investments found."
+        );
+        uint256 investment = investments[msg.sender];
+        uint256 issuanceTokens = investment.div(issuePrice);
+        investments[msg.sender] = 0;
+        _mint(msg.sender, issuanceTokens);
+    }
+
+    /**
      * @notice Invest into the issuance by sending ether to this function
      */
     function invest() public payable {
@@ -68,47 +105,10 @@ contract IssuanceEth is Ownable, ERC20, ERC20Detailed {
     }
 
     /**
-     * @dev Function for an investor to cancel his investment
-     */
-    function cancelInvestment() external {
-        require (
-            state == State.OPEN,
-            "Cannot cancel now."
-        );
-        require(
-            investments[msg.sender] > 0,
-            "No investments found."
-        );
-        uint256 amount = investments[msg.sender];
-        investments[msg.sender] = 0;
-        msg.sender.transfer(amount);
-        emit InvestmentCancelled(msg.sender, amount);
-    }
-
-    /**
      * @dev Function to move to the distributing phase
      */
     function startDistribution() public onlyOwner {
         state = State.LIVE;
-    }
-
-    /**
-     * @notice Use this function to claim your issuance tokens
-     * @dev Each user will call this function on his behalf
-     */
-    function claim() external {
-        require(
-            state == State.LIVE,
-            "Cannot claim yet."
-        );
-        require(
-            investments[msg.sender] > 0,
-            "No investments found."
-        );
-        uint256 investment = investments[msg.sender];
-        uint256 issuanceTokens = investment.div(issuePrice);
-        investments[msg.sender] = 0;
-        _mint(msg.sender, issuanceTokens);
     }
 
     /**
