@@ -1,16 +1,10 @@
 // tslint:disable-next-line:no-var-requires
-const { balance, BN, constants, ether, expectEvent, expectRevert, send, time } = require('@openzeppelin/test-helpers');
+const { BN, ether, expectEvent, expectRevert, send, time } = require('@openzeppelin/test-helpers');
 import { ClassifiedsInstance, ERC20MintableMockInstance, ERC721MintableMockInstance } from '../../types/truffle-contracts';
 
-const Classifieds = artifacts.require(
-    'Classifieds',
-) as Truffle.Contract<ClassifiedsInstance>;
-const ERC20MintableMock = artifacts.require(
-    'ERC20Mintable',
-) as Truffle.Contract<ERC20MintableMockInstance>;
-const ERC721MintableMock = artifacts.require(
-    'ERC721MintableMock',
-) as Truffle.Contract<ERC721MintableMockInstance>;
+const Classifieds = artifacts.require('Classifieds') as Truffle.Contract<ClassifiedsInstance>;
+const ERC20MintableMock = artifacts.require('ERC20Mintable') as Truffle.Contract<ERC20MintableMockInstance>;
+const ERC721MintableMock = artifacts.require('ERC721MintableMock') as Truffle.Contract<ERC721MintableMockInstance>;
 
 // tslint:disable:no-var-requires
 const chai = require('chai');

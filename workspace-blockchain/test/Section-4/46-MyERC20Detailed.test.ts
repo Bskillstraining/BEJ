@@ -1,11 +1,7 @@
 
 import { MyERC20DetailedInstance } from '../../types/truffle-contracts';
 
-const { expectRevert } = require('@openzeppelin/test-helpers');
-
 const MyERC20Detailed = artifacts.require('MyERC20Detailed') as Truffle.Contract<MyERC20DetailedInstance>;
-
-;
 
 /** @test {MyERC20Detailed} contract */
 contract('MyERC20Detailed', (accounts) => {

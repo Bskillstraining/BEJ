@@ -40,11 +40,10 @@ contract Classifieds {
     function post(uint256 item, uint256 price) public {
         itemToken.transferFrom(msg.sender, address(this), item);
         trades[msg.sender] = Trade({
-            poster: msg.sender,
+            seller: msg.sender,
             item: item,
-            price: price,
+            price: price
         });
-        tradeCounter += 1;
         emit Posted(msg.sender, item, price);
     }
 
@@ -56,8 +55,8 @@ contract Classifieds {
         require(trade.seller != address(0), "Nothing posted.");
 
         delete trades[seller];
-        currencyToken.transferFrom(msg.sender, trade.poster, trade.price);
-        itemToken.transfer(msg.sender, trade.item);
+        currencyToken.transferFrom(msg.sender, trade.seller, trade.price);
+        itemToken.transferFrom(address(this), msg.sender, trade.item);
         emit Sold(seller, msg.sender);
     }
 
@@ -65,8 +64,9 @@ contract Classifieds {
     function cancel() public {
         Trade memory trade = trades[msg.sender];
         require(trade.seller != address(0), "Nothing posted.");
-        delete trades[seller];
-        itemToken.transfer(msg.sender, trade.item);
+
+        delete trades[msg.sender];
+        itemToken.transferFrom(address(this), msg.sender, trade.item);
         emit Cancelled(msg.sender);
     }
 }
