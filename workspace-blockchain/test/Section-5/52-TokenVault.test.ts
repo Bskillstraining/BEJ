@@ -12,40 +12,36 @@ contract('TokenVault', (accounts) => {
     let currency: MyERC20Instance;
 
     const owner = accounts[0];
-    const user1 = accounts[1];
-    const user2 = accounts[2];
     const initialSupply = 1000000;
-    const userSupply = initialSupply/2;
     const currencyToStore = 1000;
 
     beforeEach(async () => {
         currency = await MyERC20.new(initialSupply);
         holdings = await TokenVault.new(currency.address);
-        await currency.transfer(user1, userSupply, { from: owner });
     });
 
     it('stores currency.', async () => {
-        await currency.approve(holdings.address, currencyToStore, { from: user1 });
-        await holdings.store(currencyToStore, { from: user1 });
+        await currency.approve(holdings.address, currencyToStore, { from: owner });
+        await holdings.store(currencyToStore, { from: owner });
 
-        const userBalance = await currency.balanceOf(user1, { from: owner });
+        const ownerBalance = await currency.balanceOf(owner, { from: owner });
         const contractBalance = await currency.balanceOf(holdings.address, { from: owner });
-        assert.equal(userBalance.toNumber(), userSupply - currencyToStore);
+        assert.equal(ownerBalance.toNumber(), initialSupply - currencyToStore);
         assert.equal(contractBalance.toNumber(), currencyToStore);
     });
 
     describe('holding currency', () => {
         beforeEach(async () => {
-            await currency.approve(holdings.address, currencyToStore, { from: user1 });
-            await holdings.store(currencyToStore, { from: user1 });
+            await currency.approve(holdings.address, currencyToStore, { from: owner });
+            await holdings.store(currencyToStore, { from: owner });
         });
 
         it('releases currency.', async () => {
-            await holdings.release(user2, { from: user1 });
+            await holdings.release({ from: owner });
 
-            const userBalance = await currency.balanceOf(user2, { from: owner });
+            const ownerBalance = await currency.balanceOf(owner, { from: owner });
             const contractBalance = await currency.balanceOf(holdings.address, { from: owner });
-            assert.equal(userBalance.toNumber(), currencyToStore);
+            assert.equal(ownerBalance.toNumber(), initialSupply);
             assert.equal(contractBalance.toNumber(), 0);
         });
     });

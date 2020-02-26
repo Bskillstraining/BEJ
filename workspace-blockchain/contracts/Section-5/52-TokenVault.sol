@@ -20,11 +20,10 @@ contract TokenVault {
         holdings[msg.sender] = amount;
     }
 
-    /// @dev Release stored tokens in the contract to a recipient.
-    /// @param recipient Who to send the tokens to.
-    function release(address recipient) public {
+    /// @dev Release stored tokens in the contract back to its owner
+    function release() public {
         uint256 amount = holdings[msg.sender];
         delete holdings[msg.sender];
-        currencyToken.transfer(recipient, amount);
+        currencyToken.transfer(msg.sender, amount);
     }
 }
