@@ -19,12 +19,13 @@ contract IssuanceEth is Ownable, ERC20, ERC20Detailed {
     bool live;
     uint256 public issuePrice;
     mapping(address => uint256) public investments;
+    ERC20 public currency;
 
     constructor(
-        string memory _name, string memory _symbol, uint8 _decimals, uint256 _issuePrice
+        string memory _name, string memory _symbol, uint8 _decimals, uint256 _issuePrice, address currencyAddress
     ) public Ownable() ERC20() ERC20Detailed(_name, _symbol, _decimals) {
-        state = State.OPEN;
         issuePrice = _issuePrice;
+        currency = ERC20(currencyAddress);
     }
 
     /**
@@ -34,7 +35,7 @@ contract IssuanceEth is Ownable, ERC20, ERC20Detailed {
         require (live == false, "Cannot cancel if live.");
         uint256 amount = investments[msg.sender];
         delete investments[msg.sender];
-        msg.sender.transfer(amount);
+        currency.transfer(msg.sender, amount);
         emit InvestmentCancelled(msg.sender, amount);
     }
 
@@ -53,15 +54,15 @@ contract IssuanceEth is Ownable, ERC20, ERC20Detailed {
     /**
      * @notice Invest into the issuance by sending ether to this function
      */
-    function invest() public payable {
+    function invest(uint256 amount) public {
         require(live == false, "Cannot invest if live.");
         require(
-            msg.value.mod(issuePrice) == 0,
+            amount.mod(issuePrice) == 0,
             "Fractional investments not allowed."
         );
 
-        investments[msg.sender] = investments[msg.sender].add(msg.value);
-        emit InvestmentAdded(msg.sender, msg.value);
+        investments[msg.sender] = investments[msg.sender].add(amount);
+        emit InvestmentAdded(msg.sender, amount);
     }
 
     /**
@@ -76,8 +77,6 @@ contract IssuanceEth is Ownable, ERC20, ERC20Detailed {
      */
     function withdraw() public onlyOwner {
         require(live == true, "Cannot withdraw until live.");
-        // payable(owner).transfer(amountRaised); // Solidity >= 0.6
-        address(uint160(owner())).transfer(address(this).balance); // Solidity >= 0.5
-        // https://ethereum.stackexchange.com/questions/64108/whats-the-difference-between-address-and-address-payable
+        currency.transfer(owner(), currency.balanceOf(address(this)));
     }
 }
