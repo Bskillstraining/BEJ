@@ -1,7 +1,7 @@
 pragma solidity ^0.5.10;
 
 
-contract HoldingsEth {
+contract EthVault {
 
     mapping (address => uint256) internal holdings;
 

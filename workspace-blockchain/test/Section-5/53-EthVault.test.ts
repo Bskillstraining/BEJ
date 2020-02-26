@@ -1,13 +1,13 @@
-import { HoldingsEthInstance } from '../../types/truffle-contracts';
+import { EthVaultInstance } from '../../types/truffle-contracts';
 
 const { BN, ether, expectRevert } = require('@openzeppelin/test-helpers');
 
-const HoldingsEth = artifacts.require('HoldingsEth') as Truffle.Contract<HoldingsEthInstance>;
+const EthVault = artifacts.require('EthVault') as Truffle.Contract<EthVaultInstance>;
 
-/** @test {Holdings} contract */
-contract('HoldingsEth', (accounts) => {
+/** @test {EthVault} contract */
+contract('EthVault', (accounts) => {
 
-    let holdings: HoldingsEthInstance;
+    let holdings: EthVaultInstance;
 
     const user1 = accounts[1];
     const user2 = accounts[2];
@@ -16,15 +16,7 @@ contract('HoldingsEth', (accounts) => {
     let userSupply : any;
 
     beforeEach(async () => {
-        holdings = await HoldingsEth.new();
-    });
-
-    it('does not allow releasing if not stored.', async () => {
-        
-        await expectRevert(
-            holdings.release(user2, { from: user1 }),
-            'Not holding.',
-        );
+        holdings = await EthVault.new();
     });
 
     it('stores ether.', async () => {
@@ -46,13 +38,6 @@ contract('HoldingsEth', (accounts) => {
     describe('holding ether', () => {
         beforeEach(async () => {
             await holdings.store({ from: user1, value: etherToStore.toString() });
-        });
-        
-        it('does not allow storing if already holding.', async () => {
-            await expectRevert(
-                holdings.store({ from: user1, value: etherToStore.toString() }),
-                'Already holding.',
-            );
         });
 
         it('releases ether.', async () => {
