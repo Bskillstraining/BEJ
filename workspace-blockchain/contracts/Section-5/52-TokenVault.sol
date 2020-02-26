@@ -1,16 +1,16 @@
 pragma solidity ^0.5.10;
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
 
 contract TokenVault {
 
-    IERC20 public currencyToken;
+    ERC20 public currencyToken;
 
     mapping (address => uint256) internal holdings;
 
     /// @dev Instantiate token contracts
     constructor (address currencyTokenAddress) public {
-        currencyToken = IERC20(currencyTokenAddress);
+        currencyToken = ERC20(currencyTokenAddress);
     }
 
     /// @dev Store tokens in the contract.
