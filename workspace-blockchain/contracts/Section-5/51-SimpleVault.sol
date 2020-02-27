@@ -4,16 +4,16 @@ import "@openzeppelin/contracts/ownership/Ownable.sol";
 
 
 contract SimpleVault is Ownable {
-    ERC20 public currencyToken;
+    ERC20 public currency;
 
     /// @dev Instantiate token contract
-    constructor (address currencyTokenAddress) public Ownable() {
-        currencyToken = ERC20(currencyTokenAddress);
+    constructor (address currencyAddress) public Ownable() {
+        currency = ERC20(currencyAddress);
     }
 
     /// @dev Release stored tokens in the contract.
     function release() public onlyOwner {
-        uint256 vaultBalance = currencyToken.balanceOf(address(this));
-        currencyToken.transfer(owner(), vaultBalance);
+        uint256 vaultBalance = currency.balanceOf(address(this));
+        currency.transfer(owner(), vaultBalance);
     }
 }

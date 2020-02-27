@@ -17,7 +17,7 @@ contract Classifieds {
     event Sold(address seller, address buyer);
     event Cancelled(address seller);
 
-    IERC20 currencyToken;
+    IERC20 currency;
     IERC721 itemToken;
 
     struct Trade {
@@ -29,8 +29,8 @@ contract Classifieds {
     mapping(address => Trade) public trades;
 
     /// @dev Instantiate token contracts
-    constructor (address currencyTokenAddress, address itemTokenAddress) public {
-        currencyToken = IERC20(currencyTokenAddress);
+    constructor (address currencyAddress, address itemTokenAddress) public {
+        currency = IERC20(currencyAddress);
         itemToken = IERC721(itemTokenAddress);
     }
 
@@ -55,7 +55,7 @@ contract Classifieds {
         require(trade.seller != address(0), "Nothing posted.");
 
         delete trades[seller];
-        currencyToken.transferFrom(msg.sender, trade.seller, trade.price);
+        currency.transferFrom(msg.sender, trade.seller, trade.price);
         itemToken.transferFrom(address(this), msg.sender, trade.item);
         emit Sold(seller, msg.sender);
     }
