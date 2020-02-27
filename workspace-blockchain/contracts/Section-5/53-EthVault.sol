@@ -6,7 +6,7 @@ contract EthVault {
     mapping (address => uint256) internal holdings;
 
     /// @dev Store ether in the contract.
-    function store() public payable {
+    function deposit() public payable {
         holdings[msg.sender] = msg.value;
     }
 

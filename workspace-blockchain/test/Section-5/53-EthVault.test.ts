@@ -7,7 +7,7 @@ const EthVault = artifacts.require('EthVault') as Truffle.Contract<EthVaultInsta
 /** @test {EthVault} contract */
 contract('EthVault', (accounts) => {
 
-    let holdings: EthVaultInstance;
+    let vault: EthVaultInstance;
 
     const user1 = accounts[1];
     const user2 = accounts[2];
@@ -16,18 +16,18 @@ contract('EthVault', (accounts) => {
     let userSupply : any;
 
     beforeEach(async () => {
-        holdings = await EthVault.new();
+        vault = await EthVault.new();
     });
 
-    it('stores ether.', async () => {
+    it('deposits ether.', async () => {
         // const userBalanceBefore = await web3.eth.getBalance(user1);
-        const contractBalanceBefore = await web3.eth.getBalance(holdings.address);
+        const contractBalanceBefore = await web3.eth.getBalance(vault.address);
         
-        const tx = await holdings.store({ from: user1, value: etherToStore.toString()/*, gasPrice: gasPrice*/ });
+        const tx = await vault.deposit({ from: user1, value: etherToStore.toString()/*, gasPrice: gasPrice*/ });
         // const gasPrice = (await web3.eth.getTransaction(tx.tx)).gasPrice;
         // const txCost = tx.receipt.gasUsed * gasPrice;
         // const userBalanceAfter = await web3.eth.getBalance(user1);
-        const contractBalanceAfter = await web3.eth.getBalance(holdings.address);
+        const contractBalanceAfter = await web3.eth.getBalance(vault.address);
 
         /// console.log('Gas price ' + gasPrice);
 
@@ -37,17 +37,17 @@ contract('EthVault', (accounts) => {
 
     describe('holding ether', () => {
         beforeEach(async () => {
-            await holdings.store({ from: user1, value: etherToStore.toString() });
+            await vault.deposit({ from: user1, value: etherToStore.toString() });
         });
 
         it('releases ether.', async () => {
             assert.equal(
-                await web3.eth.getBalance(holdings.address),
+                await web3.eth.getBalance(vault.address),
                 etherToStore,
             );
-            await holdings.release(user2, { from: user1 });
+            await vault.release(user2, { from: user1 });
             assert.equal(
-                await web3.eth.getBalance(holdings.address),
+                await web3.eth.getBalance(vault.address),
                 0,
             );
             // const userBalance = web3.eth.getBalance(user2);
