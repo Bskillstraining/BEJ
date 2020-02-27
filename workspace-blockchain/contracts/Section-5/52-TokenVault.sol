@@ -17,7 +17,7 @@ contract TokenVault {
     /// @param amount How many tokens to store.
     function deposit(uint256 amount) public {
         currency.transferFrom(msg.sender, address(this), amount);
-        vault[msg.sender] = amount;
+        vault[msg.sender] += amount;
     }
 
     /// @dev Release stored tokens in the contract back to its owner

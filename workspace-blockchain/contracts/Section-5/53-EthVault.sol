@@ -7,7 +7,7 @@ contract EthVault {
 
     /// @dev Store ether in the contract.
     function deposit() public payable {
-        vault[msg.sender] = msg.value;
+        vault[msg.sender] += msg.value;
     }
 
     /// @dev Release ether stored in the contract to a recipient.
