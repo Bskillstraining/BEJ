@@ -11,8 +11,7 @@ contract Issuance is Ownable, ERC20 {
     event Invested(address investor, uint256 investment);
     event Cancelled(address investor);
     event Claimed(address investor, uint256 tokens);
-    event Withdrawn(uint256 proceedings);
-    event GoneLive();
+    event GoneLive(uint256 proceedings);
 
     bool live;
     uint256 public price;
@@ -57,17 +56,11 @@ contract Issuance is Ownable, ERC20 {
         emit Claimed(msg.sender, tokens);
     }
 
-    /// @dev Function to move to the distributing phase
+    /// @dev Function to go live and withdraw proceedings
     function goLive() public onlyOwner {
         live = true;
-        emit GoneLive();
-    }
-
-    /// @dev Function to transfer all collected tokens to the wallet of the owner
-    function withdraw() public onlyOwner {
-        require(live == true, "Cannot withdraw until live.");
         uint256 proceedings = currency.balanceOf(address(this));
         currency.transfer(owner(), proceedings);
-        emit Withdrawn(proceedings);
+        emit GoneLive(proceedings);
     }
 }

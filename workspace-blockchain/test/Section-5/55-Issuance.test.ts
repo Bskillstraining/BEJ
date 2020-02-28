@@ -33,13 +33,6 @@ contract('Issuance', (accounts) => {
         );
     });
 
-    it('cannot withdraw if not live', async () => {
-        await expectRevert(
-            issuance.withdraw({ from: owner }),
-            'Cannot withdraw until live.',
-        );
-    });
-
     it('cannot invest a fraction of the price', async () => {
         await expectRevert(
             issuance.invest(1, { from: investor }),
@@ -72,60 +65,46 @@ contract('Issuance', (accounts) => {
                 },
             );
         });
-    });
 
-    it('can go live', async () => {
-        expectEvent(
-            await issuance.goLive({ from: owner }),
-            'GoneLive',
-            {},
-        );
-    });
-
-    describe('after going live', () => {
-        beforeEach(async () => {
-            await issuance.goLive({ from: owner });
-        });
-
-        it('cannot invest if live', async () => {
-            await expectRevert(
-                issuance.invest(investment, { from: investor }),
-                'Cannot invest if live.',
-            );
-        });
-
-        it('cannot cancel investment if live', async () => {
-            await expectRevert(
-                issuance.cancel({ from: investor }),
-                'Cannot cancel if live.',
-            );
-        });
-    });
-
-    describe('after going live and having investments', () => {
-        beforeEach(async () => {
-            await issuance.invest(investment, { from: investor });
-            await issuance.goLive({ from: owner });
-        });
-
-        it('can claim', async () => {
+        it('can go live', async () => {
             expectEvent(
-                await issuance.claim({ from: investor }),
-                'Claimed',
-                {
-                    investor: investor,
-                    tokens: tokensBought,
-                },
-            );
-        });
-        it('can withdraw', async () => {
-            expectEvent(
-                await issuance.withdraw({ from: owner }),
-                'Withdrawn',
+                await issuance.goLive({ from: owner }),
+                'GoneLive',
                 {
                     proceedings: investment,
                 },
             );
         });
+
+        describe('after going live', () => {
+            beforeEach(async () => {
+                await issuance.goLive({ from: owner });
+            });
+    
+            it('cannot invest if live', async () => {
+                await expectRevert(
+                    issuance.invest(investment, { from: investor }),
+                    'Cannot invest if live.',
+                );
+            });
+    
+            it('cannot cancel investment if live', async () => {
+                await expectRevert(
+                    issuance.cancel({ from: investor }),
+                    'Cannot cancel if live.',
+                );
+            });
+
+            it('can claim', async () => {
+                expectEvent(
+                    await issuance.claim({ from: investor }),
+                    'Claimed',
+                    {
+                        investor: investor,
+                        tokens: tokensBought,
+                    },
+                );
+            });
+        });    
     });
 });
