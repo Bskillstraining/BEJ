@@ -3,7 +3,7 @@ const Issuance = artifacts.require('Issuance') as Truffle.Contract<IssuanceInsta
 const MyERC20 = artifacts.require('MyERC20') as Truffle.Contract<MyERC20Instance>;
 
 // tslint:disable-next-line:no-var-requires
-const { expectEvent, expectRevert } = require('@openzeppelin/test-helpers');
+const { BN, expectEvent, expectRevert } = require('@openzeppelin/test-helpers');
 
 contract('Issuance', (accounts) => {
 
@@ -23,6 +23,10 @@ contract('Issuance', (accounts) => {
         issuance = await Issuance.new(price, currency.address);
         currency.transfer(investor, investorBalance, { from: owner });
         await currency.approve(issuance.address, investment, { from: investor });
+    });
+
+    it('issuance is not live', async () => {
+        assert.isFalse((await issuance.live()));
     });
 
     it('sets the price', async () => {
@@ -56,6 +60,8 @@ contract('Issuance', (accounts) => {
                 investor: investor,
             },
         );
+        // assert.equal(BN(await currency.balanceOf(investor)), BN(investorBalance) - BN(investment));
+        // assert.equal(BN(await currency.balanceOf(issuance.address)), BN(investment));
     });
     
     describe('after investing', () => {
@@ -93,6 +99,7 @@ contract('Issuance', (accounts) => {
                     proceedings: investment,
                 },
             );
+            assert.isTrue((await issuance.live()));
         });
 
         describe('after going live', () => {
