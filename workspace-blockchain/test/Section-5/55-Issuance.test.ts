@@ -1,4 +1,3 @@
-import * as chai from 'chai';
 import { IssuanceInstance, MyERC20Instance } from '../../types/truffle-contracts';
 const Issuance = artifacts.require('Issuance') as Truffle.Contract<IssuanceInstance>;
 const MyERC20 = artifacts.require('MyERC20') as Truffle.Contract<MyERC20Instance>;
@@ -26,6 +25,14 @@ contract('Issuance', (accounts) => {
         await currency.approve(issuance.address, investment, { from: investor });
     });
 
+    it('sets the price', async () => {
+        assert.equal((await issuance.price()).toString(), price);
+    });
+
+    it('sets the currency', async () => {
+        assert.equal((await issuance.currency()), currency.address);
+    });
+
     it('cannot claim if not live', async () => {
         await expectRevert(
             issuance.claim({ from: investor }),
@@ -50,10 +57,22 @@ contract('Issuance', (accounts) => {
             },
         );
     });
-
+    
     describe('after investing', () => {
         beforeEach(async () => {
             await issuance.invest(investment, { from: investor });
+        });
+
+        it('can invest again', async () => {
+            await currency.approve(issuance.address, investment, { from: investor });
+            expectEvent(
+                await issuance.invest(investment, { from: investor }),
+                'Invested',
+                {
+                    investment: '20',
+                    investor: investor,
+                },
+            );
         });
 
         it('can cancel investment', async () => {

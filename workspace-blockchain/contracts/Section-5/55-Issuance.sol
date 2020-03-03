@@ -30,8 +30,8 @@ contract Issuance is Ownable, ERC20 {
             "Cannot invest a fraction of the price."
         );
         currency.transferFrom(msg.sender, address(this), investment);
-        investments[msg.sender] = investments[msg.sender].add(investment);
-        emit Invested(msg.sender, investment);
+        investments[msg.sender] = investments[msg.sender] + investment;
+        emit Invested(msg.sender, investments[msg.sender]);
     }
 
     /// @dev Function for an investor to cancel his investment
