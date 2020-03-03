@@ -1,19 +1,16 @@
 pragma solidity ^0.5.10;
-import "@openzeppelin/contracts/math/SafeMath.sol";
 import "@openzeppelin/contracts/ownership/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
 
 /// @dev Implements a very simple issuance process for tokens
 contract Issuance is Ownable, ERC20 {
-    using SafeMath for uint256;
-
     event Invested(address investor, uint256 investment);
     event Cancelled(address investor);
     event Claimed(address investor, uint256 tokens);
     event GoneLive(uint256 proceedings);
 
-    bool live;
+    bool public live;
     uint256 public price;
     mapping(address => uint256) public investments;
     ERC20 public currency;
@@ -29,7 +26,7 @@ contract Issuance is Ownable, ERC20 {
     function invest(uint256 investment) public {
         require(live == false, "Cannot invest if live.");
         require(
-            investment.mod(price) == 0,
+            investment % price == 0,
             "Cannot invest a fraction of the price."
         );
         currency.transferFrom(msg.sender, address(this), investment);
@@ -40,17 +37,15 @@ contract Issuance is Ownable, ERC20 {
     /// @dev Function for an investor to cancel his investment
     function cancel() public {
         require (live == false, "Cannot cancel if live.");
-        uint256 investment = investments[msg.sender];
+        currency.transfer(msg.sender, investments[msg.sender]);
         delete investments[msg.sender];
-        currency.transfer(msg.sender, investment);
         emit Cancelled(msg.sender);
     }
 
     /// @dev Use this function to claim your issuance tokens
     function claim() public {
         require(live == true, "Cannot claim until live.");
-        uint256 investment = investments[msg.sender];
-        uint256 tokens = investment.div(price);
+        uint256 tokens = investments[msg.sender] / price;
         delete investments[msg.sender];
         _mint(msg.sender, tokens);
         emit Claimed(msg.sender, tokens);
