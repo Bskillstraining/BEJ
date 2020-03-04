@@ -12,14 +12,13 @@ contract('Issuance', (accounts) => {
 
     const owner = accounts[0];
     const investor = accounts[1];
-    const supply = '1000';
-    const investorBalance = '100';
-    const price = '10';
-    const investment = '10';
-    const tokensBought = '1';
+    const investorBalance = new BN(100);
+    const price = new BN(10);
+    const investment = new BN(10);
+    const tokensBought = new BN(1);
 
     beforeEach(async () => {
-        currency = await MyERC20.new(supply);
+        currency = await MyERC20.new(investorBalance);
         issuance = await Issuance.new(price, currency.address);
         currency.transfer(investor, investorBalance, { from: owner });
         await currency.approve(issuance.address, investment, { from: investor });
@@ -30,7 +29,7 @@ contract('Issuance', (accounts) => {
     });
 
     it('sets the price', async () => {
-        assert.equal((await issuance.price()).toString(), price);
+        assert.equal((await issuance.price()).toString(), price.toString());
     });
 
     it('sets the currency', async () => {
@@ -46,7 +45,7 @@ contract('Issuance', (accounts) => {
 
     it('cannot invest a fraction of the price', async () => {
         await expectRevert(
-            issuance.invest(1, { from: investor }),
+            issuance.invest(investment.div(new BN(2)), { from: investor }),
             'Cannot invest a fraction of the price.',
         );
     });
@@ -60,8 +59,14 @@ contract('Issuance', (accounts) => {
                 investor: investor,
             },
         );
-        // assert.equal(BN(await currency.balanceOf(investor)), BN(investorBalance) - BN(investment));
-        // assert.equal(BN(await currency.balanceOf(issuance.address)), BN(investment));
+        assert.equal(
+            (await currency.balanceOf(investor)),
+            investorBalance.sub(investment).toString(),
+        );
+        assert.equal(
+            (await currency.balanceOf(issuance.address)),
+            investment.toString(),
+        );
     });
     
     describe('after investing', () => {
@@ -71,13 +76,22 @@ contract('Issuance', (accounts) => {
 
         it('can invest again', async () => {
             await currency.approve(issuance.address, investment, { from: investor });
+            const doubleInvestment: BN = investment.add(investment);
             expectEvent(
                 await issuance.invest(investment, { from: investor }),
                 'Invested',
                 {
-                    investment: '20',
+                    investment: doubleInvestment.toString(),
                     investor: investor,
                 },
+            );
+            assert.equal(
+                (await currency.balanceOf(investor)),
+                investorBalance.sub(doubleInvestment).toString(),
+            );
+            assert.equal(
+                (await currency.balanceOf(issuance.address)),
+                BN(doubleInvestment).toString(), // BN bug?
             );
         });
 
@@ -100,6 +114,14 @@ contract('Issuance', (accounts) => {
                 },
             );
             assert.isTrue((await issuance.live()));
+            assert.equal(
+                (await currency.balanceOf(owner)),
+                investment.toString(),
+            );
+            assert.equal(
+                (await currency.balanceOf(issuance.address)),
+                new BN(0).toString(),
+            );
         });
 
         describe('after going live', () => {
@@ -130,7 +152,11 @@ contract('Issuance', (accounts) => {
                         tokens: tokensBought,
                     },
                 );
+                assert.equal(
+                    (await issuance.balanceOf(investor)),
+                    tokensBought.toString(),
+                );
             });
-        });    
+        });
     });
 });
