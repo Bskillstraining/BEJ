@@ -40,12 +40,12 @@
         "@openzeppelin/contracts-ethereum-package": "2.4.0",
         "@openzeppelin/test-helpers": "^0.5.4",
         "@openzeppelin/upgrades": "2.6.0",
+        "@truffle/hdwallet-provider": "1.0.28",
         "cross-env": "6.0.3",
         "truffle": "5.1.8"
     },
     "devDependencies": {
         "@codechecks/client": "0.1.10",
-        "@truffle/hdwallet-provider": "1.0.28",
         "@types/bignumber.js": "5.0.0",
         "@types/chai": "4.2.7",
         "@types/mocha": "5.2.7",
