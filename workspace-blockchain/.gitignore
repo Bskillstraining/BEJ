@@ -103,8 +103,9 @@ typings/
 # DynamoDB Local files
 .dynamodb/
 
-# the .secret
+# the secrets
 .secret
+.infuraKey
 
 # oz session
 .openzeppelin/.session

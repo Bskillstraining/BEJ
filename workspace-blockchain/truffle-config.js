@@ -18,12 +18,12 @@
  *
  */
 
-// const fs = require('fs');
+const fs = require('fs');
 const HDWalletProvider = require('@truffle/hdwallet-provider');
 require('ts-node/register');
 
-const infuraKey = 'fj4jll3k.....';
-const mnemonic = ''; // fs.readFileSync('.secret').toString().trim();
+const infuraKey = fs.readFileSync('.secret').toString().trim();
+const mnemonic = fs.readFileSync('.secret').toString().trim();
 
 module.exports = {
     test_file_extension_regexp: /.*\.ts$/,
@@ -57,6 +57,13 @@ module.exports = {
             port: 8555,
             gas: 0xfffffffffff,
             gasPrice: 0x01,
+        },
+
+        ropsten: {
+            provider: () => new HDWalletProvider(mnemonic, `https://ropsten.infura.io/v3/${infuraKey}`),
+            network_id: 3, // Ropsten's id
+            confirmations: 2, // # of confs to wait between deployments. (default: 0)
+            timeoutBlocks: 200, // # of blocks before a deployment times out  (minimum/default: 50)
         },
 
         // Useful for deploying to a public network.
