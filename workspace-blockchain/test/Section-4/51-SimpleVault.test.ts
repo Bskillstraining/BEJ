@@ -1,20 +1,20 @@
-import { SimpleVaultInstance, MyERC20Instance } from '../../types/truffle-contracts';
+import { SimpleVaultInstance, MyErc20Instance } from '../../types/truffle-contracts';
 
 const SimpleVault = artifacts.require('SimpleVault') as Truffle.Contract<SimpleVaultInstance>;
-const MyERC20 = artifacts.require('MyERC20') as Truffle.Contract<MyERC20Instance>;
+const MyErc20 = artifacts.require('MyErc20') as Truffle.Contract<MyErc20Instance>;
 
 /** @test {SimpleVault} contract */
 contract('SimpleVault', (accounts) => {
 
     let vault: SimpleVaultInstance;
-    let currency: MyERC20Instance;
+    let currency: MyErc20Instance;
 
     const owner = accounts[0];
     const initialSupply = 1000000;
     const currencyToStore = 1000;
 
     beforeEach(async () => {
-        currency = await MyERC20.new(initialSupply);
+        currency = await MyErc20.new(initialSupply);
         vault = await SimpleVault.new(currency.address);
     });
 

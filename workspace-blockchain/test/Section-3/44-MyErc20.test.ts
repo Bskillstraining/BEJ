@@ -1,13 +1,13 @@
-import { MyERC20MockInstance } from '../../types/truffle-contracts';
+import { MyErc20MockInstance } from '../../types/truffle-contracts';
 
 const { expectEvent, expectRevert } = require('@openzeppelin/test-helpers');
 
-const MyERC20 = artifacts.require('MyERC20') as Truffle.Contract<MyERC20MockInstance>;
+const MyErc20 = artifacts.require('MyErc20') as Truffle.Contract<MyErc20MockInstance>;
 
-/** @test {MyERC20} contract */
-contract('MyERC20', (accounts) => {
+/** @test {MyErc20} contract */
+contract('MyErc20', (accounts) => {
 
-    let myERC20: MyERC20MockInstance;
+    let myERC20: MyErc20MockInstance;
 
     const owner = accounts[0];
     const user1 = accounts[1];
@@ -15,7 +15,7 @@ contract('MyERC20', (accounts) => {
     const initialSupply = 1000000;
 
     beforeEach(async () => {
-        myERC20 = await MyERC20.new(initialSupply, { from: owner });
+        myERC20 = await MyErc20.new(initialSupply, { from: owner });
     });
 
     it('mints initial supply.', async () => {

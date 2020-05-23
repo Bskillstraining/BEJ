@@ -5,7 +5,7 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
 
 /// @dev An ERC20 cryptocurrency with variable supply
-contract MyERC20Mintable is ERC20, Ownable {
+contract MyErc20Mintable is ERC20, Ownable {
 
     /// @dev Initializes the cryptocurrency with a contract owner.
     constructor ()

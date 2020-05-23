@@ -1,12 +1,12 @@
 import { BigNumber } from 'bignumber.js';
-import { MyERC20DetailedInstance } from '../../types/truffle-contracts';
+import { MyErc20DetailedInstance } from '../../types/truffle-contracts';
 
-const LetsGetRich = artifacts.require('LetsGetRich') as Truffle.Contract<MyERC20DetailedInstance>;
+const LetsGetRich = artifacts.require('LetsGetRich') as Truffle.Contract<MyErc20DetailedInstance>;
 
-/** @test {MyERC20Detailed} contract */
-contract('MyERC20Detailed', (accounts) => {
+/** @test {MyErc20Detailed} contract */
+contract('MyErc20Detailed', (accounts) => {
 
-    let myERC20: MyERC20DetailedInstance;
+    let myERC20: MyErc20DetailedInstance;
 
     const owner = accounts[0];
     const user1 = accounts[1];
@@ -23,7 +23,7 @@ contract('MyERC20Detailed', (accounts) => {
 
     /**
      * Test the token details
-     * @test {MyERC20Detailed#name}, {MyERC20Detailed#symbol} and {MyERC20Detailed#decimals}
+     * @test {MyErc20Detailed#name}, {MyErc20Detailed#symbol} and {MyErc20Detailed#decimals}
      */
     it('transfers tokens and derives the fee.', async () => {
         const tokensToTransfer = new BigNumber(10 ** 20);
