@@ -1,5 +1,5 @@
 import { MyERC20MockInstance } from '../../types/truffle-contracts';
-
+// tslint:disable-next-line:no-var-requires
 const { expectEvent, expectRevert } = require('@openzeppelin/test-helpers');
 
 const MyERC20 = artifacts.require('MyERC20') as Truffle.Contract<MyERC20MockInstance>;

@@ -1,5 +1,5 @@
 import { EthVaultInstance } from '../../types/truffle-contracts';
-
+// tslint:disable-next-line:no-var-requires
 const { ether } = require('@openzeppelin/test-helpers');
 
 const EthVault = artifacts.require('EthVault') as Truffle.Contract<EthVaultInstance>;

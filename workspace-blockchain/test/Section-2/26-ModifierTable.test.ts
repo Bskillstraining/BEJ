@@ -1,5 +1,5 @@
 import { ModifierTableInstance } from '../../types/truffle-contracts';
-
+// tslint:disable-next-line:no-var-requires
 const { expectRevert } = require('@openzeppelin/test-helpers');
 
 const ModifierTable = artifacts.require('ModifierTable') as Truffle.Contract<ModifierTableInstance>;

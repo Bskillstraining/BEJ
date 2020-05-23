@@ -1,6 +1,7 @@
 import { ProprietaryTableInstance } from '../../types/truffle-contracts';
 
 const ProprietaryTable = artifacts.require('ProprietaryTable') as Truffle.Contract<ProprietaryTableInstance>;
+// tslint:disable-next-line:no-var-requires
 const { expectRevert } = require('@openzeppelin/test-helpers');
 
 /** @test {ProprietaryTable} contract */

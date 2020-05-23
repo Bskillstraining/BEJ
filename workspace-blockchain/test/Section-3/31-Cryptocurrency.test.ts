@@ -1,5 +1,5 @@
 import { CryptocurrencyInstance } from '../../types/truffle-contracts';
-
+// tslint:disable-next-line:no-var-requires
 const { expectEvent } = require('@openzeppelin/test-helpers');
 
 const Cryptocurrency = artifacts.require('Cryptocurrency') as Truffle.Contract<CryptocurrencyInstance>;

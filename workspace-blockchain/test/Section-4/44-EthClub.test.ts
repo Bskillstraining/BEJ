@@ -1,5 +1,5 @@
 import { EthClubInstance } from '../../types/truffle-contracts';
-
+// tslint:disable-next-line:no-var-requires
 const { ether, expectEvent, expectRevert } = require('@openzeppelin/test-helpers');
 
 const EthClub = artifacts.require('EthClub') as Truffle.Contract<EthClubInstance>;
@@ -29,7 +29,7 @@ contract('EthClub', (accounts) => {
             await club.register({ from: member, value: membershipFee}),
             'MemberAdded',
             {
-                member: member,
+                member: { member },
             }
         );
     });

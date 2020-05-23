@@ -1,5 +1,5 @@
 import { MintableInstance } from '../../types/truffle-contracts';
-
+// tslint:disable-next-line:no-var-requires
 const { expectRevert, expectEvent } = require('@openzeppelin/test-helpers');
 
 const Mintable = artifacts.require('Mintable') as Truffle.Contract<MintableInstance>;

@@ -1,5 +1,5 @@
 import { OwnableTableInstance } from '../../types/truffle-contracts';
-
+// tslint:disable-next-line:no-var-requires
 const { expectRevert } = require('@openzeppelin/test-helpers');
 
 const OwnableTable = artifacts.require('OwnableTable') as Truffle.Contract<OwnableTableInstance>;

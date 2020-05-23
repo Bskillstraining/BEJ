@@ -55,8 +55,8 @@ contract('Issuance', (accounts) => {
             await issuance.invest(investment, { from: investor }),
             'Invested',
             {
-                investment: investment,
-                investor: investor,
+                investment: { investment },
+                investor: { investor },
             },
         );
         assert.equal(
@@ -68,7 +68,7 @@ contract('Issuance', (accounts) => {
             investment.toString(),
         );
     });
-    
+
     describe('after investing', () => {
         beforeEach(async () => {
             await issuance.invest(investment, { from: investor });
@@ -82,7 +82,7 @@ contract('Issuance', (accounts) => {
                 'Invested',
                 {
                     investment: doubleInvestment.toString(),
-                    investor: investor,
+                    investor: { investor },
                 },
             );
             assert.equal(
@@ -100,7 +100,7 @@ contract('Issuance', (accounts) => {
                 await issuance.cancel({ from: investor }),
                 'Cancelled',
                 {
-                    investor: investor,
+                    investor: { investor },
                 },
             );
         });
@@ -128,14 +128,14 @@ contract('Issuance', (accounts) => {
             beforeEach(async () => {
                 await issuance.goLive({ from: owner });
             });
-    
+
             it('cannot invest if live', async () => {
                 await expectRevert(
                     issuance.invest(investment, { from: investor }),
                     'Cannot invest if live.',
                 );
             });
-    
+
             it('cannot cancel investment if live', async () => {
                 await expectRevert(
                     issuance.cancel({ from: investor }),
@@ -148,7 +148,7 @@ contract('Issuance', (accounts) => {
                     await issuance.claim({ from: investor }),
                     'Claimed',
                     {
-                        investor: investor,
+                        investor: { investor },
                         tokens: tokensBought,
                     },
                 );

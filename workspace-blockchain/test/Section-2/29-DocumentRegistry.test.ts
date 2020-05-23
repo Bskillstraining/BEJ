@@ -1,5 +1,5 @@
 import { DocumentRegistryInstance } from '../../types/truffle-contracts';
-
+// tslint:disable-next-line:no-var-requires
 const { expectRevert, expectEvent } = require('@openzeppelin/test-helpers');
 
 const DocumentRegistry = artifacts.require('DocumentRegistry') as Truffle.Contract<DocumentRegistryInstance>;

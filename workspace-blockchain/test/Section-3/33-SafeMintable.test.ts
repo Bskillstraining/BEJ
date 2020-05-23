@@ -1,7 +1,7 @@
 import { BigNumber } from 'bignumber.js';
 import { MintableInstance } from '../../types/truffle-contracts';
 import { SafeMintableInstance } from '../../types/truffle-contracts';
-
+// tslint:disable-next-line:no-var-requires
 const { expectEvent, expectRevert } = require('@openzeppelin/test-helpers');
 
 const Mintable = artifacts.require('Mintable') as Truffle.Contract<MintableInstance>;
