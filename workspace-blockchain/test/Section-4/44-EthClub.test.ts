@@ -10,7 +10,7 @@ contract('EthClub', (accounts) => {
     let club: EthClubInstance;
 
     const owner = accounts[0];
-    const member = accounts[1];
+    const memberAccount = accounts[1];
     const membershipFee = ether('0.1');
 
     beforeEach(async () => {
@@ -19,35 +19,35 @@ contract('EthClub', (accounts) => {
 
     it('requires the membership fee for registering', async () => {
         await expectRevert(
-            club.register({ from: member }),
+            club.register({ from: memberAccount }),
             'Please pay the exact fee.',
         );
     });
 
     it('registers a member', async () => {
         expectEvent(
-            await club.register({ from: member, value: membershipFee}),
+            await club.register({ from: memberAccount, value: membershipFee}),
             'MemberAdded',
             {
-                member: { member },
+                member: memberAccount,
             }
         );
     });
 
     it('registers membership time', async () => {
-        const tx = await club.register({ from: member, value: membershipFee});
+        const tx = await club.register({ from: memberAccount, value: membershipFee});
         const time = (await web3.eth.getTransaction(tx.tx)).blockNumber;
-        assert.equal((await club.get(member)), time);
+        assert.equal((await club.get(memberAccount)), time);
     });
 
     describe('after members register', () => {
         beforeEach(async () => {
-            await club.register({ from: member, value: membershipFee});
+            await club.register({ from: memberAccount, value: membershipFee});
         });
 
         it('shows memberships', async () => {
             assert.equal((await club.get(owner)).toString(), '0');
-            assert.notEqual((await club.get(member)).toString(), '0');
+            assert.notEqual((await club.get(memberAccount)).toString(), '0');
         });
 
         it('allows owner to withdraw funds', async () => {

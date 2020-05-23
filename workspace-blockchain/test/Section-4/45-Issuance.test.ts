@@ -11,17 +11,17 @@ contract('Issuance', (accounts) => {
     let currency: MyERC20Instance;
 
     const owner = accounts[0];
-    const investor = accounts[1];
+    const investorAccount = accounts[1];
     const investorBalance = new BN(100);
     const price = new BN(10);
-    const investment = new BN(10);
+    const investmentAmount = new BN(10);
     const tokensBought = new BN(1);
 
     beforeEach(async () => {
         currency = await MyERC20.new(investorBalance);
         issuance = await Issuance.new(price, currency.address);
-        currency.transfer(investor, investorBalance, { from: owner });
-        await currency.approve(issuance.address, investment, { from: investor });
+        currency.transfer(investorAccount, investorBalance, { from: owner });
+        await currency.approve(issuance.address, investmentAmount, { from: investorAccount });
     });
 
     it('issuance is not live', async () => {
@@ -38,55 +38,55 @@ contract('Issuance', (accounts) => {
 
     it('cannot claim if not live', async () => {
         await expectRevert(
-            issuance.claim({ from: investor }),
+            issuance.claim({ from: investorAccount }),
             'Cannot claim until live.',
         );
     });
 
     it('cannot invest a fraction of the price', async () => {
         await expectRevert(
-            issuance.invest(investment.div(new BN(2)), { from: investor }),
+            issuance.invest(investmentAmount.div(new BN(2)), { from: investorAccount }),
             'Cannot invest a fraction of the price.',
         );
     });
 
     it('can invest', async () => {
         expectEvent(
-            await issuance.invest(investment, { from: investor }),
+            await issuance.invest(investmentAmount, { from: investorAccount }),
             'Invested',
             {
-                investment: { investment },
-                investor: { investor },
+                investment: investmentAmount,
+                investor: investorAccount,
             },
         );
         assert.equal(
-            (await currency.balanceOf(investor)),
-            investorBalance.sub(investment).toString(),
+            (await currency.balanceOf(investorAccount)),
+            investorBalance.sub(investmentAmount).toString(),
         );
         assert.equal(
             (await currency.balanceOf(issuance.address)),
-            investment.toString(),
+            investmentAmount.toString(),
         );
     });
 
     describe('after investing', () => {
         beforeEach(async () => {
-            await issuance.invest(investment, { from: investor });
+            await issuance.invest(investmentAmount, { from: investorAccount });
         });
 
         it('can invest again', async () => {
-            await currency.approve(issuance.address, investment, { from: investor });
-            const doubleInvestment: BN = investment.add(investment);
+            await currency.approve(issuance.address, investmentAmount, { from: investorAccount });
+            const doubleInvestment: BN = investmentAmount.add(investmentAmount);
             expectEvent(
-                await issuance.invest(investment, { from: investor }),
+                await issuance.invest(investmentAmount, { from: investorAccount }),
                 'Invested',
                 {
                     investment: doubleInvestment.toString(),
-                    investor: { investor },
+                    investor: investorAccount,
                 },
             );
             assert.equal(
-                (await currency.balanceOf(investor)),
+                (await currency.balanceOf(investorAccount)),
                 investorBalance.sub(doubleInvestment).toString(),
             );
             assert.equal(
@@ -97,10 +97,10 @@ contract('Issuance', (accounts) => {
 
         it('can cancel investment', async () => {
             expectEvent(
-                await issuance.cancel({ from: investor }),
+                await issuance.cancel({ from: investorAccount }),
                 'Cancelled',
                 {
-                    investor: { investor },
+                    investor: investorAccount,
                 },
             );
         });
@@ -110,13 +110,13 @@ contract('Issuance', (accounts) => {
                 await issuance.goLive({ from: owner }),
                 'GoneLive',
                 {
-                    proceedings: investment,
+                    proceedings: investmentAmount,
                 },
             );
             assert.isTrue((await issuance.live()));
             assert.equal(
                 (await currency.balanceOf(owner)),
-                investment.toString(),
+                investmentAmount.toString(),
             );
             assert.equal(
                 (await currency.balanceOf(issuance.address)),
@@ -131,29 +131,29 @@ contract('Issuance', (accounts) => {
 
             it('cannot invest if live', async () => {
                 await expectRevert(
-                    issuance.invest(investment, { from: investor }),
+                    issuance.invest(investmentAmount, { from: investorAccount }),
                     'Cannot invest if live.',
                 );
             });
 
             it('cannot cancel investment if live', async () => {
                 await expectRevert(
-                    issuance.cancel({ from: investor }),
+                    issuance.cancel({ from: investorAccount }),
                     'Cannot cancel if live.',
                 );
             });
 
             it('can claim', async () => {
                 expectEvent(
-                    await issuance.claim({ from: investor }),
+                    await issuance.claim({ from: investorAccount }),
                     'Claimed',
                     {
-                        investor: { investor },
+                        investor: investorAccount,
                         tokens: tokensBought,
                     },
                 );
                 assert.equal(
-                    (await issuance.balanceOf(investor)),
+                    (await issuance.balanceOf(investorAccount)),
                     tokensBought.toString(),
                 );
             });
