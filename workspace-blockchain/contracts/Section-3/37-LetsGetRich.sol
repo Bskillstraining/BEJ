@@ -1,18 +1,18 @@
 pragma solidity ^0.5.10;
 
-import "./36-MyErc20Detailed.sol";
+import "./36-MyERC20Detailed.sol";
 import "@openzeppelin/contracts/math/SafeMath.sol";
 
 
-/// @dev Adds a fee on transactions to MyErc20Detailed
-contract LetsGetRich is MyErc20Detailed {
+/// @dev Adds a fee on transactions to MyERC20Detailed
+contract LetsGetRich is MyERC20Detailed {
     using SafeMath for uint256;
 
     uint256 internal _fee = 1; // In basis points (0.01%)
 
     /// @dev Passes along the contructor parameters
     constructor (string memory name, string memory symbol, uint8 decimals)
-        MyErc20Detailed(name, symbol, decimals)
+        MyERC20Detailed(name, symbol, decimals)
         public
     {}
 

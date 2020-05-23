@@ -1,9 +1,9 @@
 pragma solidity ^0.5.10;
 
-import "./../34-MyErc20.sol";
+import "./../34-MyERC20.sol";
 
 
-contract MyErc20Mock is MyErc20 {
+contract MyERC20Mock is MyERC20 {
 
     function mint(address recipient, uint256 amount)
         public

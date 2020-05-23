@@ -1,6 +1,6 @@
-import { IssuanceInstance, MyErc20Instance } from '../../types/truffle-contracts';
+import { IssuanceInstance, MyERC20Instance } from '../../types/truffle-contracts';
 const Issuance = artifacts.require('Issuance') as Truffle.Contract<IssuanceInstance>;
-const MyErc20 = artifacts.require('MyErc20') as Truffle.Contract<MyErc20Instance>;
+const MyERC20 = artifacts.require('MyERC20') as Truffle.Contract<MyERC20Instance>;
 
 // tslint:disable-next-line:no-var-requires
 const { BN, expectEvent, expectRevert } = require('@openzeppelin/test-helpers');
@@ -8,7 +8,7 @@ const { BN, expectEvent, expectRevert } = require('@openzeppelin/test-helpers');
 contract('Issuance', (accounts) => {
 
     let issuance: IssuanceInstance;
-    let currency: MyErc20Instance;
+    let currency: MyERC20Instance;
 
     const owner = accounts[0];
     const investor = accounts[1];
@@ -18,7 +18,7 @@ contract('Issuance', (accounts) => {
     const tokensBought = new BN(1);
 
     beforeEach(async () => {
-        currency = await MyErc20.new(investorBalance);
+        currency = await MyERC20.new(investorBalance);
         issuance = await Issuance.new(price, currency.address);
         currency.transfer(investor, investorBalance, { from: owner });
         await currency.approve(issuance.address, investment, { from: investor });

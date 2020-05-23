@@ -1,12 +1,12 @@
 
-import { MyErc20DetailedInstance } from '../../types/truffle-contracts';
+import { MyERC20DetailedInstance } from '../../types/truffle-contracts';
 
-const MyErc20Detailed = artifacts.require('MyErc20Detailed') as Truffle.Contract<MyErc20DetailedInstance>;
+const MyERC20Detailed = artifacts.require('MyERC20Detailed') as Truffle.Contract<MyERC20DetailedInstance>;
 
-/** @test {MyErc20Detailed} contract */
-contract('MyErc20Detailed', (accounts) => {
+/** @test {MyERC20Detailed} contract */
+contract('MyERC20Detailed', (accounts) => {
 
-    let myERC20: MyErc20DetailedInstance;
+    let myERC20: MyERC20DetailedInstance;
 
     const owner = accounts[0];
     const name = 'BeyondSkills Token';
@@ -14,12 +14,12 @@ contract('MyErc20Detailed', (accounts) => {
     const decimals = 18;
 
     beforeEach(async () => {
-        myERC20 = await MyErc20Detailed.new(name, symbol, decimals, { from: owner });
+        myERC20 = await MyERC20Detailed.new(name, symbol, decimals, { from: owner });
     });
 
     /**
      * Test the token details
-     * @test {MyErc20Detailed#name}, {MyErc20Detailed#symbol} and {MyErc20Detailed#decimals}
+     * @test {MyERC20Detailed#name}, {MyERC20Detailed#symbol} and {MyERC20Detailed#decimals}
      */
     it('Retrieve token details.', async () => {
         assert.equal(
