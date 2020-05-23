@@ -1,7 +1,5 @@
 import { TokenVaultInstance, MyERC20Instance } from '../../types/truffle-contracts';
 
-const { expectEvent, expectRevert } = require('@openzeppelin/test-helpers');
-
 const TokenVault = artifacts.require('TokenVault') as Truffle.Contract<TokenVaultInstance>;
 const MyERC20 = artifacts.require('MyERC20') as Truffle.Contract<MyERC20Instance>;
 

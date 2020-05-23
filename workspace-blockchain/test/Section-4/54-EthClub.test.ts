@@ -1,6 +1,6 @@
 import { EthClubInstance } from '../../types/truffle-contracts';
 
-const { BN, ether, expectEvent, expectRevert } = require('@openzeppelin/test-helpers');
+const { ether, expectEvent, expectRevert } = require('@openzeppelin/test-helpers');
 
 const EthClub = artifacts.require('EthClub') as Truffle.Contract<EthClubInstance>;
 
