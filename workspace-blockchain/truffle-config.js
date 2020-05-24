@@ -22,8 +22,8 @@ const fs = require('fs');
 const HDWalletProvider = require('@truffle/hdwallet-provider');
 require('ts-node/register');
 
-const infuraKey = fs.readFileSync('.secret').toString().trim();
-const mnemonic = fs.readFileSync('.secret').toString().trim();
+const infuraKey = ''; // fs.readFileSync('.secret').toString().trim();
+const mnemonic = ''; // fs.readFileSync('.secret').toString().trim();
 
 module.exports = {
     test_file_extension_regexp: /.*\.ts$/,
@@ -79,7 +79,7 @@ module.exports = {
     // Set default mocha options here, use special reporters etc.
     mocha: {
         timeout: 100000,
-        reporter: 'eth-gas-reporter',
+        // reporter: 'eth-gas-reporter',
     },
 
     plugins: ['solidity-coverage'],
