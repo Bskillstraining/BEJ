@@ -22,7 +22,7 @@ const fs = require('fs');
 const HDWalletProvider = require('@truffle/hdwallet-provider');
 require('ts-node/register');
 
-const infuraKey = ''; // fs.readFileSync('.secret').toString().trim();
+const infuraKey = ''; // fs.readFileSync('.infuraKey').toString().trim();
 const mnemonic = ''; // fs.readFileSync('.secret').toString().trim();
 
 module.exports = {
