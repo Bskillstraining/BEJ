@@ -44,7 +44,7 @@ contract('SafeMintable', (accounts) => {
         safeMintable = await SafeMintable.new({ from: owner });
     });
 
-    it('mints initial supply.', async () => {
+    it('initializes', async () => {
         assert.equal(
             (await safeMintable.balanceOf(owner)).toNumber(),
             0,

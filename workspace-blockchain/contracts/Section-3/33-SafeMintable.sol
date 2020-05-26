@@ -42,7 +42,7 @@ contract SafeMintable is Ownable {
     function burn(uint256 amount)
         public
     {
-        balances[owner()] = balances[owner()].sub(amount);
+        balances[msg.sender] = balances[msg.sender].sub(amount);
         emit Burnt(amount);
     }
 
