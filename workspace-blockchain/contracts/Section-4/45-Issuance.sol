@@ -10,10 +10,12 @@ contract Issuance is Ownable, ERC20 {
     event Claimed(address investor, uint256 tokens);
     event GoneLive(uint256 proceedings);
 
+    ERC20 public currency;
+
     bool public live;
+
     uint256 public price;
     mapping(address => uint256) public investments;
-    ERC20 public currency;
 
     constructor(uint256 issuePrice, address currencyAddress)
         public Ownable() ERC20()
@@ -36,10 +38,19 @@ contract Issuance is Ownable, ERC20 {
 
     /// @dev Function for an investor to cancel his investment
     function cancel() public {
-        require (live == false, "Cannot cancel if live.");
-        currency.transfer(msg.sender, investments[msg.sender]);
+        require(live == false, "Cannot cancel if live.");
+        uint256 tokens = investments[msg.sender];
         delete investments[msg.sender];
+        currency.transfer(msg.sender, tokens);
         emit Cancelled(msg.sender);
+    }
+
+    /// @dev Function to go live and withdraw proceedings
+    function goLive() public onlyOwner {
+        live = true;
+        uint256 proceedings = currency.balanceOf(address(this));
+        currency.transfer(owner(), proceedings);
+        emit GoneLive(proceedings);
     }
 
     /// @dev Use this function to claim your issuance tokens
@@ -49,13 +60,5 @@ contract Issuance is Ownable, ERC20 {
         delete investments[msg.sender];
         _mint(msg.sender, tokens);
         emit Claimed(msg.sender, tokens);
-    }
-
-    /// @dev Function to go live and withdraw proceedings
-    function goLive() public onlyOwner {
-        live = true;
-        uint256 proceedings = currency.balanceOf(address(this));
-        currency.transfer(owner(), proceedings);
-        emit GoneLive(proceedings);
     }
 }
